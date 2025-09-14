@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cannabis Widget Demo - Enhanced</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; margin: 0; padding: 20px; 
+            background: #f5f5f5; min-height: 100vh; 
+        }
+        .demo-container { 
+            max-width: 800px; margin: 0 auto; background: white; 
+            padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
+        }
+        .demo-header { text-align: center; margin-bottom: 30px; }
+        .demo-header h1 { color: #2D5E3E; margin-bottom: 10px; }
+        .config-section { 
+            background: #f8f9fa; padding: 20px; border-radius: 8px; 
+            margin-bottom: 20px; border-left: 4px solid #2D5E3E; 
+        }
+        .config-row { display: flex; gap: 15px; margin-bottom: 10px; flex-wrap: wrap; }
+        .config-group { flex: 1; min-width: 200px; }
+        .config-group label { display: block; margin-bottom: 5px; font-weight: 600; }
+        .config-group input, .config-group select { 
+            width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; 
+        }
+        .btn { 
+            background: #2D5E3E; color: white; padding: 10px 20px; border: none; 
+            border-radius: 4px; cursor: pointer; margin: 5px; font-size: 14px; 
+        }
+        .btn:hover { background: #8FBC8F; }
+        .status { 
+            padding: 10px; border-radius: 4px; margin: 10px 0; font-weight: 500; 
+        }
+        .status-success { background: #d4edda; color: #155724; }
+        .status-error { background: #f8d7da; color: #721c24; }
+        .status-warning { background: #fff3cd; color: #856404; }
+        .info-box { 
+            background: #e3f2fd; border-left: 4px solid #1976d2; 
+            padding: 15px; margin: 15px 0; 
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <div class="demo-header">
+            <h1>🌿 Cannabis Widget Demo</h1>
+            <p>Enhanced with Category-First Progressive Disclosure & Dynamic Potency Ranges</p>
+        </div>
+        
+        <div class="config-section">
+            <h3>Widget Configuration</h3>
+            <div class="config-row">
+                <div class="config-group">
+                    <label for="tenant-id">Tenant ID:</label>
+                    <input type="text" id="tenant-id" value="5388610a-535a-4d3f-92e5-9ae6527f9283">
+                </div>
+                <div class="config-group">
+                    <label for="api-key">API Key:</label>
+                    <input type="text" id="api-key" value="aa7cfcf7b7403d6fb3513b1d3dda2825">
+                </div>
+            </div>
+            <div class="config-row">
+                <div class="config-group">
+                    <label for="api-url">API URL:</label>
+                    <input type="text" id="api-url" value="http://localhost:8000">
+                </div>
+                <div class="config-group">
+                    <label for="debug-toggle">Debug Mode:</label>
+                    <select id="debug-toggle">
+                        <option value="true" selected>Enabled (Show Debug Info)</option>
+                        <option value="false">Disabled (Production Mode)</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div style="margin-top: 15px;">
+                <button class="btn" onclick="initializeWidget()">Initialize Enhanced Widget</button>
+                <button class="btn" onclick="testAPI()" style="background: #6c757d;">Test API</button>
+                <button class="btn" onclick="destroyWidget()" style="background: #dc3545;">Remove Widget</button>
+            </div>
+            
+            <div id="status-container"></div>
+        </div>
+        
+        <div class="info-box">
+            <h4>Enhanced Features:</h4>
+            <ul>
+                <li>✅ <strong>Category-First UX:</strong> Select category first, then relevant filters appear</li>
+                <li>✅ <strong>Dynamic Potency Ranges:</strong> Real inventory maximums (Drinks: 0-1000mg!)</li>
+                <li>✅ <strong>Zero Results Intelligence:</strong> Always provides 3 alternatives</li>
+                <li>✅ <strong>Real Market Pricing:</strong> Category averages from actual inventory</li>
+                <li>✅ <strong>Enhanced THC Logic:</strong> Uses max(THC, THCa) values</li>
+                <li>✅ <strong>Debug Visibility:</strong> See tenant strategies and alternatives</li>
+            </ul>
+        </div>
+        
+        <div style="background: #f8f9fa; padding: 15px; border-radius: 4px; margin-top: 20px;">
+            <h4>Testing Instructions:</h4>
+            <ol>
+                <li>Click "Test API" to verify backend connection</li>
+                <li>Click "Initialize Enhanced Widget" to load the widget</li>
+                <li>Try selecting different categories (Edibles vs Drinks vs Flower)</li>
+                <li>Notice how potency ranges change: % for Flower, mg for Edibles</li>
+                <li>Test impossible filters to trigger Zero Results Intelligence</li>
+                <li>Check debug info to see tenant strategies in action</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- Load the working enhanced widget -->
+    <script src="../src/cannabis-widget-enhanced.js"></script>
+    
+    <script>
+        let currentWidget = null;
+        
+        function showStatus(message, type = 'success') {
+            const container = document.getElementById('status-container');
+            container.innerHTML = `<div class="status status-${type}">${message}</div>`;
+            setTimeout(() => container.innerHTML = '', 5000);
+        }
+        
+        function getWidgetConfig() {
+            return {
+                tenantId: document.getElementById('tenant-id').value,
+                apiKey: document.getElementById('api-key').value,
+                apiUrl: document.getElementById('api-url').value,
+                showDebug: document.getElementById('debug-toggle').value === 'true'
+            };
+        }
+        
+        async function testAPI() {
+            const config = getWidgetConfig();
+            try {
+                showStatus('Testing API connection...', 'warning');
+                const response = await fetch(`${config.apiUrl}/health`);
+                if (response.ok) {
+                    showStatus('✅ API connection successful!', 'success');
+                } else {
+                    showStatus(`❌ API connection failed: ${response.status}`, 'error');
+                }
+            } catch (error) {
+                showStatus(`❌ API error: ${error.message}`, 'error');
+            }
+        }
+        
+        function initializeWidget() {
+            const config = getWidgetConfig();
+            
+            if (!config.tenantId || !config.apiKey) {
+                showStatus('Please enter Tenant ID and API Key first', 'error');
+                return;
+            }
+            
+            if (currentWidget) destroyWidget();
+            
+            try {
+                if (typeof CannabisWidget === 'undefined') {
+                    showStatus('❌ CannabisWidget class not found', 'error');
+                    console.error('Available globals:', Object.keys(window).filter(k => k.toLowerCase().includes('cannabis')));
+                    return;
+                }
+                
+                console.log('🔧 Initializing enhanced widget with config:', config);
+                
+                currentWidget = new CannabisWidget(config);
+                currentWidget.init();
+                
+                showStatus('🌿 Enhanced widget initialized! Try selecting categories to see dynamic ranges.', 'success');
+                console.log('✅ Enhanced widget initialized successfully');
+                
+            } catch (error) {
+                showStatus(`❌ Widget initialization failed: ${error.message}`, 'error');
+                console.error('Widget error:', error, error.stack);
+            }
+        }
+        
+        function destroyWidget() {
+            // Remove widget elements
+            const widgets = ['#cannabis-widget-enhanced', '.cannabis-widget'];
+            widgets.forEach(selector => {
+                const element = document.querySelector(selector);
+                if (element) element.remove();
+            });
+            
+            // Remove styles
+            const styles = document.getElementById('cannabis-widget-styles');
+            if (styles) styles.remove();
+            
+            currentWidget = null;
+            showStatus('Widget removed', 'warning');
+        }
+        
+        // Check widget loading on page load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                if (typeof CannabisWidget !== 'undefined') {
+                    console.log('✅ Enhanced CannabisWidget loaded successfully');
+                    showStatus('Enhanced widget ready! Configure and click "Initialize Enhanced Widget"', 'success');
+                } else {
+                    console.error('❌ CannabisWidget not found');
+                    showStatus('❌ Widget script failed to load. Check console and file paths.', 'error');
+                }
+            }, 500);
+        });
+    </script>
+</body>
+</html>
