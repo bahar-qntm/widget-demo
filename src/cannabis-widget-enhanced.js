@@ -4,7 +4,7 @@
 class CannabisWidget {
   constructor(config) {
     this.config = config || {};
-    this.state = { isExpanded: false, products: [], categoryStats: {}, sessionId: null };
+    this.state = { isMiniView: false, products: [], categoryStats: {}, sessionId: null };
     this.apiClient = new CannabisAPIClient(this.config);
   }
 
@@ -28,7 +28,7 @@ class CannabisWidget {
     const style = document.createElement('style');
     style.id = 'cannabis-widget-styles';
     style.textContent = `
-            @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+      @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 
       .cannabis-widget {
           position: fixed;
@@ -49,7 +49,8 @@ class CannabisWidget {
       .widget-header {
           background: linear-gradient(135deg, #2D5E3E, #8FBC8F);
           color: white;
-          padding: 12px 20px;
+          padding: 15px 20px;
+          height: 20px;
           display: flex;
           justify-content: space-between;
           align-items: center;
@@ -233,13 +234,30 @@ class CannabisWidget {
           gap: 10px;
       }
 
+      .minimize-button {
+          background: rgba(255, 255, 255, 0.2);
+          font-size: 1.5rem;
+          padding: 5px;
+          aspect-ratio: 1 / 1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          height: 100%;
+          border-radius: 6px;
+          user-select: none;
+    }
+
+      .hidden {
+          display: none;
+      }
+
       @media (max-width: 960px) {
           .cannabis-widget {
               width: 98%;
           }
 
           .products-grid {
-              grid-template-columns: 1fr;
+              grid-template-columns: 1fr !important;
           }
       }
     `;
@@ -252,9 +270,9 @@ class CannabisWidget {
     widget.className = 'cannabis-widget';
     
     widget.innerHTML = `
-      <div class="widget-header" onclick="window.cannabisWidget.toggleExpanded()">
+      <div class="widget-header">
         <div class="widget-title">🌿 Cannabis Consultant</div>
-        <button class="toggle-btn" id="toggle-btn">▼ More Options</button>
+        <div class="minimize-button hidden">×</div>
       </div>
       
       <div class="products-section">
@@ -332,24 +350,59 @@ class CannabisWidget {
     document.body.appendChild(widget);
     this.widget = widget;
     window.cannabisWidget = this;
+
+    const minimizeButton = this.widget.querySelector('.minimize-button');
+    minimizeButton.addEventListener('click', this.toggleMiniView.bind(this));
+
+    this.toggleMiniView();
   }
 
   attachEventListeners() {
     // Events handled via onclick
   }
 
-  toggleExpanded() {
-    this.state.isExpanded = !this.state.isExpanded;
-    const section = this.widget.querySelector('#expandable-section');
-    const btn = this.widget.querySelector('#toggle-btn');
+  toggleMiniView() {
+    this.state.isMiniView = !this.state.isMiniView;
+    this.renderProducts();
     
-    if (this.state.isExpanded) {
-      section.classList.add('expanded');
-      btn.textContent = '▲ Less Options';
-    } else {
-      section.classList.remove('expanded');
-      btn.textContent = '▼ More Options';
+    this.widget.style.width = this.state.isMiniView ? '700px' : '95%';
+
+    const minimizeButton = this.widget.querySelector('.minimize-button');
+    minimizeButton.classList.toggle('hidden', this.state.isMiniView);
+    
+    const productSection = this.widget.querySelector('.products-section');
+    productSection.style.padding = this.state.isMiniView ? '10px' : '20px';
+    
+    const productsGrid = this.widget.querySelector('.products-grid');
+    productsGrid.style.gridTemplateColumns = this.state.isMiniView ? 'repeat(3, minmax(212px, 1fr))' : 'repeat(3, minmax(280px, 1fr))';
+    
+    const productCards = this.widget.querySelectorAll('.product-card');
+    productCards.forEach(card => {
+      card.style.height = this.state.isMiniView ? '80px' : '120px';
+      card.style.pointerEvents = this.state.isMiniView ? 'none' : 'auto';
+    });
+
+    const expandableSection = this.widget.querySelector('#expandable-section');
+    expandableSection.classList.toggle('expanded', !this.state.isMiniView);
+
+    if (!this.state.isMiniView) {
+      return;
     }
+
+    this.widget.addEventListener('click', this.onWidgetClickExpand.bind(this));
+  }
+
+  onWidgetClickExpand(event) {
+      if (event.target.closest('.minimize-button')) return;
+
+      event.stopPropagation();
+      event.preventDefault();
+
+      if (!this.state.isMiniView) return;
+
+      this.toggleMiniView();
+
+
   }
 
   async loadCategoryStats() {
@@ -633,13 +686,14 @@ class CannabisWidget {
     }
     
     grid.innerHTML = specialMessageHtml + this.state.products.map(product => `
-      <div class="product-card" onclick="window.open('${product.url || '#'}', '_blank')">
+      <div class="product-card" ${this.state.isMiniView ? 'style="height: 80px;"' : ''}  data-url="${product.url || '#'}">
         ${product.image_url 
           ? `<img src="${product.image_url}" alt="${product.name || 'Cannabis Product'}" class="product-image" />`
           : '<div class="product-image">🌿</div>'
         }
         <div class="product-info">
           <div class="product-name">${product.name || 'Product'}</div>
+          ${ this.state.isMiniView ? '' : `
           <div class="product-details">
             ${product.category || 'Cannabis'} • ${this.getProductEffects(product)}
           </div>
@@ -649,10 +703,20 @@ class CannabisWidget {
           <div class="product-details">
             CBD: ${this.getProductCBD(product)}${this.getProductUnit(product)}
           </div>
+          `}
           <div class="product-price">$${product.price || '0'}</div>
         </div>
       </div>
     `).join('');
+
+    let productCards = grid.querySelectorAll('.product-card');
+    
+    productCards.forEach(card => {
+      card.addEventListener('click', (event) => {
+        if (this.state.isMiniView) return;
+        window.open(card.getAttribute('data-url'), '_blank');
+      });
+    });
   }
 
   async sendChat() {
