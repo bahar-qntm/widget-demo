@@ -291,7 +291,7 @@ class CannabisWidget {
                 <option value="">Select Category...</option>
                 <option value="Flower">Flower</option>
                 <option value="Vapes">Vapes</option>
-                <option value="Pre Rolls">Pre Rolls</option>
+                <option value="Pre Rolls">Pre-Rolls</option>
                 <option value="Infused Pre Rolls">Infused Pre Rolls</option>
                 <option value="Edibles">Edibles</option>
                 <option value="Drinks">Drinks</option>
