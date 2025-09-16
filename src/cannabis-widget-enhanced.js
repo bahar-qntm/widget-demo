@@ -629,7 +629,7 @@ class CannabisWidget {
       const cbdPotencyGroup = this.widget.querySelector('#cbd-potency-group');
       if (cbdPotencyRange && cbdPotencyGroup && cbdPotencyGroup.style.display !== 'none') {
         const cbdMax = parseFloat(cbdPotencyRange.value);
-        if (!isNaN(cbdMax) && cbdMax > 0) {
+        if (!isNaN(cbdMax) && cbdMax >= 0) {
           filters.cbd_max = cbdMax;
           console.log(`🔍 Filtering with CBD max: ${cbdMax}mg`);
         }
@@ -640,7 +640,7 @@ class CannabisWidget {
       const thcPotencyGroup = this.widget.querySelector('#thc-potency-group');
       if (thcPotencyRange && thcPotencyGroup && thcPotencyGroup.style.display !== 'none') {
         const thcMax = parseFloat(thcPotencyRange.value);
-        if (!isNaN(thcMax) && thcMax > 0) {
+        if (!isNaN(thcMax) && thcMax >= 0) {
           filters.thc_max = thcMax;
           console.log(`🔍 Filtering with THC max: ${thcMax}${['Drinks', 'Edibles', 'Topicals'].includes(category) ? 'mg' : '%'}`);
         }
