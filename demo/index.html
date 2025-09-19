@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cannabis Widget Demo - Enhanced</title>
+    <title>Enhanced AI Cannabis Widget Demo - Phase 1 & 2</title>
     <style>
         body { 
             font-family: Arial, sans-serif; margin: 0; padding: 20px; 
@@ -15,6 +15,16 @@
         }
         .demo-header { text-align: center; margin-bottom: 30px; }
         .demo-header h1 { color: #2D5E3E; margin-bottom: 10px; }
+        .phase-badge {
+            background: linear-gradient(135deg, #2D5E3E, #8FBC8F);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-block;
+            margin: 10px 5px;
+        }
         .config-section { 
             background: #f8f9fa; padding: 20px; border-radius: 8px; 
             margin-bottom: 20px; border-left: 4px solid #2D5E3E; 
@@ -30,6 +40,12 @@
             border-radius: 4px; cursor: pointer; margin: 5px; font-size: 14px; 
         }
         .btn:hover { background: #8FBC8F; }
+        .btn-secondary {
+            background: #6c757d;
+        }
+        .btn-danger {
+            background: #dc3545;
+        }
         .status { 
             padding: 10px; border-radius: 4px; margin: 10px 0; font-weight: 500; 
         }
@@ -40,17 +56,61 @@
             background: #e3f2fd; border-left: 4px solid #1976d2; 
             padding: 15px; margin: 15px 0; 
         }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .feature-card {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .feature-card h4 {
+            color: #2D5E3E;
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .test-scenarios {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .test-scenarios h4 {
+            color: #2D5E3E;
+            margin-top: 0;
+        }
+        .test-item {
+            background: white;
+            border-radius: 4px;
+            padding: 12px;
+            margin: 8px 0;
+            border-left: 3px solid #2D5E3E;
+        }
+        .test-item strong {
+            color: #2D5E3E;
+        }
     </style>
 </head>
 <body>
     <div class="demo-container">
         <div class="demo-header">
-            <h1>🌿 Cannabis Widget Demo</h1>
-            <p>Enhanced with Category-First Progressive Disclosure & Dynamic Potency Ranges</p>
+            <h1>🧠 Enhanced AI Cannabis Widget Demo</h1>
+            <p>Complete Phase 1 & 2 Implementation</p>
+            <div>
+                <span class="phase-badge">Phase 1: AI Parameter Extraction</span>
+                <span class="phase-badge">Phase 2: Behavioral Psychology</span>
+            </div>
         </div>
         
         <div class="config-section">
-            <h3>Widget Configuration</h3>
+            <h3>🔧 Widget Configuration</h3>
             <div class="config-row">
                 <div class="config-group">
                     <label for="tenant-id">Tenant ID:</label>
@@ -64,53 +124,125 @@
             <div class="config-row">
                 <div class="config-group">
                     <label for="api-url">API URL:</label>
-                    <input type="text" id="api-url" value="https://budtender.cannafax.com/">
+                    <input type="text" id="api-url" value="http://localhost:8000">
                 </div>
                 <div class="config-group">
                     <label for="debug-toggle">Debug Mode:</label>
                     <select id="debug-toggle">
-                        <option value="true" selected>Enabled (Show Debug Info)</option>
+                        <option value="true" selected>Enabled (Show All Features)</option>
                         <option value="false">Disabled (Production Mode)</option>
                     </select>
                 </div>
             </div>
             
             <div style="margin-top: 15px;">
-                <button class="btn" onclick="initializeWidget()">Initialize Enhanced Widget</button>
-                <button class="btn" onclick="testAPI()" style="background: #6c757d;">Test API</button>
-                <button class="btn" onclick="destroyWidget()" style="background: #dc3545;">Remove Widget</button>
+                <button class="btn" onclick="initializeEnhancedWidget()">🚀 Initialize Enhanced Widget</button>
+                <button class="btn btn-secondary" onclick="testAPI()">🔍 Test API Connection</button>
+                <button class="btn btn-danger" onclick="destroyWidget()">❌ Remove Widget</button>
             </div>
             
             <div id="status-container"></div>
         </div>
-        
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <h4>🤖 AI Parameter Extraction</h4>
+                <ul>
+                    <li>Natural language processing</li>
+                    <li>Confidence scoring</li>
+                    <li>Visual parameter display</li>
+                    <li>Fallback keyword detection</li>
+                </ul>
+            </div>
+            
+            <div class="feature-card">
+                <h4>🧠 Behavioral Psychology</h4>
+                <ul>
+                    <li>3-stage user education (awareness/consideration/evaluation)</li>
+                    <li>Trust-building messaging</li>
+                    <li>Progressive quality education</li>
+                    <li>Cannafax brand preparation</li>
+                </ul>
+            </div>
+            
+            <div class="feature-card">
+                <h4>🔄 Bidirectional Sync</h4>
+                <ul>
+                    <li>Chat updates UI filters</li>
+                    <li>UI changes inform chat context</li>
+                    <li>Visual sync indicators</li>
+                    <li>Conflict resolution</li>
+                </ul>
+            </div>
+            
+            <div class="feature-card">
+                <h4>📊 Enhanced RAG</h4>
+                <ul>
+                    <li>Multi-vector product search</li>
+                    <li>Educational content integration</li>
+                    <li>Context-aware responses</li>
+                    <li>Quality awareness building</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="test-scenarios">
+            <h4>🧪 Test Scenarios to Try</h4>
+            
+            <div class="test-item">
+                <strong>Basic Parameter Extraction:</strong>
+                <br>Try: "I want something to help me relax" - Watch filters auto-update!
+            </div>
+            
+            <div class="test-item">
+                <strong>Activity-Based Search:</strong>
+                <br>Try: "I'm going clubbing with friends" - See energy effects detected
+            </div>
+            
+            <div class="test-item">
+                <strong>Behavioral Psychology Stages:</strong>
+                <br>Try: "I'm completely new to cannabis" vs "I want premium quality products"
+            </div>
+            
+            <div class="test-item">
+                <strong>Filter Synchronization:</strong>
+                <br>Change UI filters manually, then ask in chat - see bidirectional sync
+            </div>
+            
+            <div class="test-item">
+                <strong>Quality Education:</strong>
+                <br>Ask: "What makes one product better than another?" - Progressive education!
+            </div>
+        </div>
+
         <div class="info-box">
-            <h4>Enhanced Features:</h4>
-            <ul>
-                <li>✅ <strong>Category-First UX:</strong> Select category first, then relevant filters appear</li>
-                <li>✅ <strong>Dynamic Potency Ranges:</strong> Real inventory maximums (Drinks: 0-1000mg!)</li>
-                <li>✅ <strong>Zero Results Intelligence:</strong> Always provides 3 alternatives</li>
-                <li>✅ <strong>Real Market Pricing:</strong> Category averages from actual inventory</li>
-                <li>✅ <strong>Enhanced THC Logic:</strong> Uses max(THC, THCa) values</li>
-                <li>✅ <strong>Debug Visibility:</strong> See tenant strategies and alternatives</li>
-            </ul>
+            <h4>🎯 How to Test the Enhanced Features:</h4>
+            <ol>
+                <li><strong>Initialize the widget</strong> using the button above</li>
+                <li><strong>Enable Debug mode</strong> to see all AI processing details</li>
+                <li><strong>Try the chat scenarios</strong> above to see parameter extraction</li>
+                <li><strong>Watch the filter sync</strong> - chat updates UI automatically</li>
+                <li><strong>Notice education stage</strong> changes based on your questions</li>
+                <li><strong>Check debug panel</strong> for psychology guidance and user profiling</li>
+            </ol>
         </div>
         
         <div style="background: #f8f9fa; padding: 15px; border-radius: 4px; margin-top: 20px;">
-            <h4>Testing Instructions:</h4>
-            <ol>
-                <li>Click "Test API" to verify backend connection</li>
-                <li>Click "Initialize Enhanced Widget" to load the widget</li>
-                <li>Try selecting different categories (Edibles vs Drinks vs Flower)</li>
-                <li>Notice how potency ranges change: % for Flower, mg for Edibles</li>
-                <li>Test impossible filters to trigger Zero Results Intelligence</li>
-                <li>Check debug info to see tenant strategies in action</li>
-            </ol>
+            <h4>✨ What's New in Enhanced v2:</h4>
+            <ul>
+                <li>🤖 <strong>Chat API v2:</strong> Full 5-step processing pipeline</li>
+                <li>🧠 <strong>Behavioral Psychology:</strong> Education stage detection + trust building</li>
+                <li>🔄 <strong>Smart Filter Sync:</strong> Bidirectional chat ↔ UI synchronization</li>
+                <li>📊 <strong>Parameter Extraction:</strong> Visual display with confidence scores</li>
+                <li>🎯 <strong>Progressive Education:</strong> Awareness → Consideration → Evaluation</li>
+                <li>🐛 <strong>Enhanced Debug:</strong> See all AI processing in real-time</li>
+                <li>🏷️ <strong>Quality Preparation:</strong> Subtle Cannafax brand preparation</li>
+            </ul>
         </div>
     </div>
 
-    <!-- Load the working enhanced widget -->
-    <script src="../src/cannabis-widget-enhanced.js"></script>
+    <!-- Load the enhanced widget -->
+    <script src="../src/cannabis-widget-enhanced-v2.js"></script>
     
     <script>
         let currentWidget = null;
@@ -133,19 +265,33 @@
         async function testAPI() {
             const config = getWidgetConfig();
             try {
-                showStatus('Testing API connection...', 'warning');
-                const response = await fetch(`${config.apiUrl}/health`);
-                if (response.ok) {
-                    showStatus('✅ API connection successful!', 'success');
+                showStatus('Testing enhanced API connection...', 'warning');
+                
+                // Test health endpoint
+                const healthResponse = await fetch(`${config.apiUrl}/health`);
+                if (!healthResponse.ok) {
+                    showStatus(`❌ Health check failed: ${healthResponse.status}`, 'error');
+                    return;
+                }
+                
+                // Test Chat API v2 endpoint
+                const chatTestResponse = await fetch(`${config.apiUrl}/chat-v2/tenant/${config.tenantId}/chat`, {
+                    method: 'POST',
+                    headers: { 'X-API-Key': config.apiKey, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ question: 'test', current_filters: {} })
+                });
+                
+                if (chatTestResponse.ok) {
+                    showStatus('✅ Enhanced API connection successful! Chat API v2 working!', 'success');
                 } else {
-                    showStatus(`❌ API connection failed: ${response.status}`, 'error');
+                    showStatus(`❌ Chat API v2 failed: ${chatTestResponse.status}`, 'error');
                 }
             } catch (error) {
                 showStatus(`❌ API error: ${error.message}`, 'error');
             }
         }
         
-        function initializeWidget() {
+        function initializeEnhancedWidget() {
             const config = getWidgetConfig();
             
             if (!config.tenantId || !config.apiKey) {
@@ -156,19 +302,19 @@
             if (currentWidget) destroyWidget();
             
             try {
-                if (typeof CannabisWidget === 'undefined') {
-                    showStatus('❌ CannabisWidget class not found', 'error');
+                if (typeof CannabisWidgetEnhanced === 'undefined') {
+                    showStatus('❌ Enhanced CannabisWidget class not found', 'error');
                     console.error('Available globals:', Object.keys(window).filter(k => k.toLowerCase().includes('cannabis')));
                     return;
                 }
                 
-                console.log('🔧 Initializing enhanced widget with config:', config);
+                console.log('🔧 Initializing enhanced widget v2 with config:', config);
                 
-                currentWidget = new CannabisWidget(config);
+                currentWidget = new CannabisWidgetEnhanced(config);
                 currentWidget.init();
                 
-                showStatus('🌿 Enhanced widget initialized! Try selecting categories to see dynamic ranges.', 'success');
-                console.log('✅ Enhanced widget initialized successfully');
+                showStatus('🧠 Enhanced AI Cannabis Widget v2 initialized! Try the test scenarios above.', 'success');
+                console.log('✅ Enhanced widget v2 initialized successfully');
                 
             } catch (error) {
                 showStatus(`❌ Widget initialization failed: ${error.message}`, 'error');
@@ -177,30 +323,33 @@
         }
         
         function destroyWidget() {
-            // Remove widget elements
-            const widgets = ['#cannabis-widget-enhanced', '.cannabis-widget'];
+            // Remove enhanced widget elements
+            const widgets = ['.cannabis-widget-enhanced', '#cannabis-widget-enhanced', '.cannabis-widget'];
             widgets.forEach(selector => {
                 const element = document.querySelector(selector);
                 if (element) element.remove();
             });
             
-            // Remove styles
-            const styles = document.getElementById('cannabis-widget-styles');
+            // Remove enhanced styles
+            const styles = document.getElementById('cannabis-widget-styles-v2');
             if (styles) styles.remove();
             
+            // Reset body padding
+            document.body.style.paddingTop = '0px';
+            
             currentWidget = null;
-            showStatus('Widget removed', 'warning');
+            showStatus('Enhanced widget removed', 'warning');
         }
         
         // Check widget loading on page load
         window.addEventListener('load', () => {
             setTimeout(() => {
-                if (typeof CannabisWidget !== 'undefined') {
-                    console.log('✅ Enhanced CannabisWidget loaded successfully');
-                    showStatus('Enhanced widget ready! Configure and click "Initialize Enhanced Widget"', 'success');
+                if (typeof CannabisWidgetEnhanced !== 'undefined') {
+                    console.log('✅ Enhanced CannabisWidget v2 loaded successfully');
+                    showStatus('🚀 Enhanced AI Cannabis Widget v2 ready! Configure and click "Initialize Enhanced Widget"', 'success');
                 } else {
-                    console.error('❌ CannabisWidget not found');
-                    showStatus('❌ Widget script failed to load. Check console and file paths.', 'error');
+                    console.error('❌ Enhanced CannabisWidget not found');
+                    showStatus('❌ Enhanced widget script failed to load. Check console and file paths.', 'error');
                 }
             }, 500);
         });
