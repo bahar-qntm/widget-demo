@@ -685,16 +685,38 @@ class CannabisWidgetEnhanced {
   getCurrentFilters() {
     const filters = {};
     
+    // Only include filters from VISIBLE groups
     const category = this.widget.querySelector('#category-filter-enhanced').value;
     if (category) filters.product_categories = [category];
     
     const effects = this.widget.querySelector('#effects-filter-enhanced').value;
     if (effects) filters.desired_effects = [effects];
     
-    const priceElement = this.widget.querySelector('#price-budget-enhanced');
-    const price = priceElement ? parseFloat(priceElement.value) : null;
-    if (!isNaN(price) && price > 0) {
-      filters.price_max = price;
+    // Price filter - only include if price group is visible
+    const priceGroup = this.widget.querySelector('#price-group-enhanced');
+    if (priceGroup && priceGroup.style.display !== 'none') {
+      const price = parseFloat(this.widget.querySelector('#price-budget-enhanced').value);
+      if (!isNaN(price) && price > 0) {
+        filters.price_max = price;
+      }
+    }
+    
+    // THC potency filter - only include if THC group is visible
+    const thcGroup = this.widget.querySelector('#thc-potency-group-enhanced');
+    if (thcGroup && thcGroup.style.display !== 'none') {
+      const thc = parseFloat(this.widget.querySelector('#thc-potency-range-enhanced').value);
+      if (!isNaN(thc) && thc > 0) {
+        filters.thc_max = thc;
+      }
+    }
+    
+    // CBD potency filter - only include if CBD group is visible
+    const cbdGroup = this.widget.querySelector('#cbd-potency-group-enhanced');
+    if (cbdGroup && cbdGroup.style.display !== 'none') {
+      const cbd = parseFloat(this.widget.querySelector('#cbd-potency-range-enhanced').value);
+      if (!isNaN(cbd) && cbd > 0) {
+        filters.cbd_max = cbd;
+      }
     }
     
     return filters;
