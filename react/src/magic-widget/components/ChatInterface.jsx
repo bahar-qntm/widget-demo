@@ -138,8 +138,13 @@ const ChatInterface = ({
         {messages.map((message) => (
           <div
             key={message.id}
-            className={`chat-message ${message.role}`}
+            className={`chat-message ${message.role} ${message.isFilterResponse ? 'filter-response' : ''}`}
           >
+            {message.isFilterResponse && (
+              <span className="filter-response-icon" title="Auto-generated response based on filter update">
+                🎛️
+              </span>
+            )}
             <div
               className="message-content"
               dangerouslySetInnerHTML={{
