@@ -237,13 +237,14 @@
       return result.join("");
     };
     return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "chat-section", children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "section-title", children: "💬 AI Chat Assistant" }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "section-title", children: "💬 Chat with Budtender" }),
       /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "chat-messages", children: [
         messages.map((message) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
           "div",
           {
-            className: `chat-message ${message.role}`,
+            className: `chat-message ${message.role} ${message.isFilterResponse ? "filter-response" : ""}`,
             children: [
+              message.isFilterResponse && /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "filter-response-icon", title: "Auto-generated response based on filter update", children: "🎛️" }),
               /* @__PURE__ */ jsxRuntimeExports.jsx(
                 "div",
                 {
@@ -677,17 +678,13 @@
     ] });
   };
   const WidgetHeader = ({
-    educationStage,
     isMiniView,
     showDebug,
     onToggleMiniView,
     onToggleDebug
   }) => {
     return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "widget-header", children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "header-left", children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "widget-title", children: "🧠 AI Magic Consultant" }),
-        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "education-stage-badge", children: educationStage || "awareness" })
-      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "header-left", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "widget-title", children: "🌿 Budtender" }) }),
       /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "header-right", children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx(
           "button",
@@ -705,16 +702,6 @@
             onClick: onToggleMiniView,
             title: isMiniView ? "Expand widget" : "Minimize widget",
             children: isMiniView ? "⬆️" : "⬇️"
-          }
-        ),
-        /* @__PURE__ */ jsxRuntimeExports.jsx(
-          "button",
-          {
-            className: "minimize-button",
-            onClick: onToggleMiniView,
-            style: { display: isMiniView ? "none" : "flex" },
-            title: "Minimize widget",
-            children: "×"
           }
         )
       ] })
@@ -1399,7 +1386,7 @@
       {
         id: 1,
         role: "assistant",
-        content: "Hi! I'm your AI cannabis consultant. Tell me what you're looking for or ask me anything!",
+        content: "Hi! I'm your budtender. Tell me what you're looking for or ask me anything!",
         timestamp: /* @__PURE__ */ new Date()
       }
     ]);
@@ -1587,7 +1574,6 @@
           /* @__PURE__ */ jsxRuntimeExports.jsx(
             WidgetHeader,
             {
-              educationStage: "awareness",
               isMiniView,
               showDebug,
               onToggleMiniView: handleToggleMiniView,
@@ -1644,14 +1630,24 @@
       }
     );
   };
+  function getAutoApiUrl() {
+    const hostname = window.location.hostname;
+    if (hostname === "localhost" || hostname === "127.0.0.1" || hostname.startsWith("192.168.")) {
+      return "http://localhost:8000";
+    } else {
+      return "https://budtender.cannafax.com";
+    }
+  }
   const DEFAULT_CONFIG = {
     tenantId: "5388610a-535a-4d3f-92e5-9ae6527f9283",
     apiKey: "aa7cfcf7b7403d6fb3513b1d3dda2825",
-    apiUrl: "http://localhost:8000"
+    apiUrl: getAutoApiUrl()
+    // Automatically detect environment
   };
   function initMagicWidget(container, config = {}) {
     const finalConfig = { ...DEFAULT_CONFIG, ...config };
     console.log("🚀 Initializing Magic Widget with config:", finalConfig);
+    console.log("🌐 Auto-detected API URL:", finalConfig.apiUrl);
     const root = createRoot(container);
     root.render(require$$0$1.createElement(MagicWidget, { config: finalConfig }));
     return {
@@ -1668,9 +1664,12 @@
       const config = {
         tenantId: container.dataset.tenantId || DEFAULT_CONFIG.tenantId,
         apiKey: container.dataset.apiKey || DEFAULT_CONFIG.apiKey,
-        apiUrl: container.dataset.apiUrl || DEFAULT_CONFIG.apiUrl
+        apiUrl: container.dataset.apiUrl || getAutoApiUrl()
+        // Auto-detect if not specified
       };
       console.log("🔍 Auto-initializing Magic Widget");
+      console.log("🌐 Environment detected:", window.location.hostname);
+      console.log("🔌 Using API URL:", config.apiUrl);
       return initMagicWidget(container, config);
     }
     console.log("ℹ️ No magic-widget-container found for auto-init");
