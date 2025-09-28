@@ -131,7 +131,7 @@ const ChatInterface = ({
 
   return (
     <div className="chat-section">
-      <div className="section-title">💬 AI Chat Assistant</div>
+      <div className="section-title">💬 Chat with Budtender</div>
       
       {/* Messages Container */}
       <div className="chat-messages">

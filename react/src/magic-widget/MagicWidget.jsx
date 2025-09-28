@@ -56,7 +56,7 @@ const MagicWidget = ({ config = {} }) => {
     {
       id: 1,
       role: 'assistant',
-      content: "Hi! I'm your AI cannabis consultant. Tell me what you're looking for or ask me anything!",
+      content: "Hi! I'm your budtender. Tell me what you're looking for or ask me anything!",
       timestamp: new Date()
     }
   ]);
@@ -321,7 +321,6 @@ const MagicWidget = ({ config = {} }) => {
       onClick={handleWidgetClick}
     >
       <WidgetHeader
-        educationStage={'awareness'}
         isMiniView={isMiniView}
         showDebug={showDebug}
         onToggleMiniView={handleToggleMiniView}
