@@ -21,23 +21,23 @@ jobs:
       with:
         node-version: '18'
         cache: 'npm'
-        cache-dependency-path: widget/react/package-lock.json
+        cache-dependency-path: react/package-lock.json
         
     - name: Install dependencies
       run: |
-        cd widget/react
+        cd react
         npm ci
         
     - name: Build widget
       run: |
-        cd widget/react
+        cd react
         npm run build-widget
         
     - name: Copy built files and demo to docs folder
       run: |
         mkdir -p docs
-        cp widget/react/dist/* docs/
-        cp widget/react/public/demo.html docs/
+        cp react/dist/* docs/
+        cp react/public/demo.html docs/
         # Update demo.html paths for GitHub Pages deployment
         sed -i 's|../dist/style.css|./style.css|g' docs/demo.html
         sed -i 's|../dist/magic-widget.umd.js|./magic-widget.umd.js|g' docs/demo.html
