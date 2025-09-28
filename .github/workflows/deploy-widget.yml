@@ -1,0 +1,70 @@
+name: Build and Deploy Widget
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: react/package-lock.json
+        
+    - name: Install dependencies
+      run: |
+        cd react
+        npm ci
+        
+    - name: Build widget
+      run: |
+        cd react
+        npm run build-widget
+        
+    - name: Copy built files to docs folder
+      run: |
+        mkdir -p docs
+        cp react/dist/* docs/
+        
+    - name: Check for changes
+      id: verify-changed-files
+      run: |
+        if [ -n "$(git status --porcelain)" ]; then
+          echo "changed=true" >> $GITHUB_OUTPUT
+        else
+          echo "changed=false" >> $GITHUB_OUTPUT
+        fi
+        
+    - name: Commit and push changes
+      if: steps.verify-changed-files.outputs.changed == 'true'
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add docs/
+        git commit -m "🚀 Auto-deploy: Build and update widget files
+        
+        - Built from commit: ${{ github.sha }}
+        - Timestamp: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
+        - Workflow: ${{ github.workflow }}"
+        git push
+        
+    - name: Deploy to GitHub Pages
+      if: steps.verify-changed-files.outputs.changed == 'true'
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./docs
+        publish_branch: gh-pages
+        force_orphan: true

@@ -1,103 +1,129 @@
-# Magic Widget
+# Magic Widget - React Demo
 
-A modern React-based widget that provides cannabis product recommendations and AI chat functionality for any website.
+🧠 AI-powered cannabis consultation widget built with React
 
-## 🌟 Current Implementation: React v2.0
+## 🚀 Automated Deployment
 
-This widget is now **exclusively** built with React 18, providing a modern, reliable, and maintainable solution. The vanilla JavaScript implementation has been **removed** as of this version.
+This repository uses **GitHub Actions** to automatically build and deploy the React widget to GitHub Pages.
 
-## 📁 File Structure
+### How it Works
+
+1. **Push Changes**: Make changes to React code in `react/` folder
+2. **Auto-Build**: GitHub Actions automatically runs `npm run build-widget`
+3. **Auto-Deploy**: Built files are copied to `docs/` folder and deployed to GitHub Pages
+4. **Live Update**: Your demo is automatically updated at the live URL
+
+### Live Demo
+
+**🌐 Live URL**: `https://bahar-qntm.github.io/widget-demo/docs/demo.html`
+
+### Workflow Triggers
+
+- ✅ Pushes to `main` branch
+- ✅ Pull requests to `main` branch
+
+### What Gets Built
+
+- `react/dist/demo.html` → `docs/demo.html`
+- `react/dist/magic-widget.umd.js` → `docs/magic-widget.umd.js`
+- `react/dist/style.css` → `docs/style.css`
+- `react/dist/magic-widget.umd.js.map` → `docs/magic-widget.umd.js.map`
+
+## 📁 Repository Structure
 
 ```
 widget/
-├── react/                          # Complete React implementation
-│   ├── src/                        # React source code
-│   ├── dist/                       # Built files ready for deployment
-│   ├── public/demo.html            # Demo and testing page
-│   ├── package.json                # Dependencies and build scripts
-│   └── README.md                   # Detailed React documentation
-└── README.md                       # This overview (you are here)
+├── .github/workflows/
+│   └── deploy-widget.yml     # GitHub Actions workflow
+├── react/                    # React widget source code
+│   ├── src/                  # Widget components and logic
+│   ├── public/               # Demo HTML template
+│   ├── package.json          # Dependencies and scripts
+│   └── dist/                 # Built files (auto-generated)
+├── docs/                     # GitHub Pages deployment (auto-generated)
+│   ├── demo.html            # Live demo page
+│   ├── magic-widget.umd.js  # Widget bundle
+│   └── style.css            # Widget styles
+└── README.md                # This file
 ```
 
-## 🚀 Quick Start
+## 🛠️ Development Workflow
 
-Navigate to the React implementation for full documentation:
+### Making Changes
 
+1. Edit React code in `react/src/` folder
+2. Test locally: `cd react && npm run dev`
+3. Commit and push changes
+4. GitHub Actions automatically builds and deploys
+
+### No Manual Building Required!
+
+❌ **Before**: Manual process
 ```bash
-cd widget/react/
-npm install
-npm run dev
+cd react
+npm run build-widget
+cp dist/* ../docs/
+git add docs/
+git commit -m "Update built files"
+git push
 ```
 
-Then visit `http://localhost:3001/demo.html` to see the widget in action.
-
-## ✨ Features
-
-- **Modern React Architecture**: Built with React 18, hooks, and modern patterns
-- **Real-time Streaming**: Server-sent events for instant AI responses
-- **Smart Filter Synchronization**: Bidirectional chat ↔ UI sync with midpoint ±20% ranges
-- **AI Parameter Extraction**: Advanced NLP to extract user preferences
-- **Eliminates Race Conditions**: React reconciliation prevents vanilla JS complexity
-- **Mobile Responsive**: Works seamlessly on all devices
-- **Zero Configuration**: Auto-initializes with data attributes
-- **Production Ready**: Minified bundle with source maps
-
-## 🔄 Migration from Vanilla JS (Completed)
-
-The vanilla JavaScript implementation has been **completely removed** to eliminate:
-- ❌ Race conditions and complex state management
-- ❌ Manual DOM manipulation bugs  
-- ❌ Parameter extraction edge cases
-- ❌ Complex event coordination issues
-
-The React version provides:
-- ✅ **100% Backend Compatibility** - Same APIs, same features
-- ✅ **Better Performance** - React reconciliation handles updates efficiently  
-- ✅ **Improved Developer Experience** - Modern tooling and debugging
-- ✅ **Maintainable Codebase** - Component-based architecture
-
-## 📚 Documentation
-
-For complete documentation, installation instructions, and API details, see:
-
-**[widget/react/README.md](react/README.md)**
-
-This contains:
-- Detailed installation instructions
-- Component architecture overview
-- API integration documentation
-- Development and deployment guides
-- Troubleshooting and debug information
-
-## 🛠️ Development
-
+✅ **Now**: Automatic process
 ```bash
-cd widget/react/
-
-# Development
-npm run dev                 # Start dev server on port 3001
-npm run build              # Build for production
-npm run build-widget      # Build distributable widget bundle
-
-# Testing
-open http://localhost:3001/demo.html
+# Just edit your React code and push!
+git add react/src/
+git commit -m "Update widget features"
+git push  # 🎉 Automatic build and deploy!
 ```
 
-## 🚀 Deployment
+## 📋 Configuration
 
-The React widget builds to:
-- `widget/react/dist/magic-widget.umd.js` - Main widget bundle
-- `widget/react/dist/style.css` - Widget styles
+### API Configuration
 
-Deploy these files to your CDN and include them in customer sites.
+The widget connects to: `https://budtender.cannafax.com`
 
-## 🎯 Current Status
+To change API endpoint, edit `react/public/demo.html`:
+```html
+<div 
+    id="magic-widget-container"
+    data-api-url="https://your-api-domain.com"
+    data-tenant-id="your-tenant-id"
+    data-api-key="your-api-key"
+></div>
+```
 
-- ✅ **Vanilla JS Implementation**: Removed (simplified codebase)
-- ✅ **React Implementation**: Active and production-ready
-- ✅ **Backend Compatibility**: 100% maintained
-- ✅ **Feature Parity**: All features preserved and improved
+### GitHub Pages Setup
+
+1. Go to repository Settings → Pages
+2. Source: "Deploy from a branch"
+3. Branch: `gh-pages` (auto-created by workflow)
+4. Folder: `/` (root)
+
+## 🔧 Troubleshooting
+
+### Workflow Not Running?
+- Check Actions tab in GitHub repository
+- Ensure you're pushing to `main` branch
+- Check workflow permissions in Settings → Actions
+
+### Build Failures?
+- Check Actions logs for detailed error messages
+- Ensure `package.json` and dependencies are correct
+- Test build locally: `cd react && npm run build-widget`
+
+### CORS Issues?
+Add your GitHub Pages domain to backend CORS settings:
+`https://bahar-qntm.github.io`
+
+## 🎯 Benefits of This Setup
+
+- ✅ **No Manual Builds**: Push React code, get deployed widget
+- ✅ **Always Current**: Docs folder always matches latest React code
+- ✅ **Version Control**: Built files are tracked and versioned
+- ✅ **Rollback Ready**: Easy to revert to previous versions
+- ✅ **Consistent**: Same build environment every time
+- ✅ **Fast**: Automated deployment in ~2-3 minutes
 
 ---
 
-**For all technical details, visit [widget/react/README.md](react/README.md)**
+*This automated setup eliminates the manual build steps that were required with vanilla JS development.*
