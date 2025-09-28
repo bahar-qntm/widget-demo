@@ -237,7 +237,7 @@
       return result.join("");
     };
     return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "chat-section", children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "section-title", children: "💬 AI Chat Assistant" }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "section-title", children: "💬 Chat with Budtender" }),
       /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "chat-messages", children: [
         messages.map((message) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
           "div",
@@ -678,17 +678,13 @@
     ] });
   };
   const WidgetHeader = ({
-    educationStage,
     isMiniView,
     showDebug,
     onToggleMiniView,
     onToggleDebug
   }) => {
     return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "widget-header", children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "header-left", children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "widget-title", children: "🧠 AI Magic Consultant" }),
-        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "education-stage-badge", children: educationStage || "awareness" })
-      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "header-left", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "widget-title", children: "🌿 Budtender" }) }),
       /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "header-right", children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx(
           "button",
@@ -706,16 +702,6 @@
             onClick: onToggleMiniView,
             title: isMiniView ? "Expand widget" : "Minimize widget",
             children: isMiniView ? "⬆️" : "⬇️"
-          }
-        ),
-        /* @__PURE__ */ jsxRuntimeExports.jsx(
-          "button",
-          {
-            className: "minimize-button",
-            onClick: onToggleMiniView,
-            style: { display: isMiniView ? "none" : "flex" },
-            title: "Minimize widget",
-            children: "×"
           }
         )
       ] })
@@ -1400,7 +1386,7 @@
       {
         id: 1,
         role: "assistant",
-        content: "Hi! I'm your AI cannabis consultant. Tell me what you're looking for or ask me anything!",
+        content: "Hi! I'm your budtender. Tell me what you're looking for or ask me anything!",
         timestamp: /* @__PURE__ */ new Date()
       }
     ]);
@@ -1588,7 +1574,6 @@
           /* @__PURE__ */ jsxRuntimeExports.jsx(
             WidgetHeader,
             {
-              educationStage: "awareness",
               isMiniView,
               showDebug,
               onToggleMiniView: handleToggleMiniView,
