@@ -59,12 +59,3 @@ jobs:
         - Timestamp: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
         - Workflow: ${{ github.workflow }}"
         git push
-        
-    - name: Deploy to GitHub Pages
-      if: steps.verify-changed-files.outputs.changed == 'true'
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./docs
-        publish_branch: gh-pages
-        force_orphan: true

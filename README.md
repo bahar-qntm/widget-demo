@@ -96,8 +96,8 @@ To change API endpoint, edit `react/public/demo.html`:
 
 1. Go to repository Settings → Pages
 2. Source: "Deploy from a branch"
-3. Branch: `gh-pages` (auto-created by workflow)
-4. Folder: `/` (root)
+3. Branch: `main`
+4. Folder: `/docs`
 
 ## 🔧 Troubleshooting
 
