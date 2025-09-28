@@ -242,8 +242,9 @@
         messages.map((message) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
           "div",
           {
-            className: `chat-message ${message.role}`,
+            className: `chat-message ${message.role} ${message.isFilterResponse ? "filter-response" : ""}`,
             children: [
+              message.isFilterResponse && /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "filter-response-icon", title: "Auto-generated response based on filter update", children: "🎛️" }),
               /* @__PURE__ */ jsxRuntimeExports.jsx(
                 "div",
                 {
