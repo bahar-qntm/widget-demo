@@ -1630,14 +1630,24 @@
       }
     );
   };
+  function getAutoApiUrl() {
+    const hostname = window.location.hostname;
+    if (hostname === "localhost" || hostname === "127.0.0.1" || hostname.startsWith("192.168.")) {
+      return "http://localhost:8000";
+    } else {
+      return "https://budtender.cannafax.com";
+    }
+  }
   const DEFAULT_CONFIG = {
     tenantId: "5388610a-535a-4d3f-92e5-9ae6527f9283",
     apiKey: "aa7cfcf7b7403d6fb3513b1d3dda2825",
-    apiUrl: "http://localhost:8000"
+    apiUrl: getAutoApiUrl()
+    // Automatically detect environment
   };
   function initMagicWidget(container, config = {}) {
     const finalConfig = { ...DEFAULT_CONFIG, ...config };
     console.log("🚀 Initializing Magic Widget with config:", finalConfig);
+    console.log("🌐 Auto-detected API URL:", finalConfig.apiUrl);
     const root = createRoot(container);
     root.render(require$$0$1.createElement(MagicWidget, { config: finalConfig }));
     return {
@@ -1654,9 +1664,12 @@
       const config = {
         tenantId: container.dataset.tenantId || DEFAULT_CONFIG.tenantId,
         apiKey: container.dataset.apiKey || DEFAULT_CONFIG.apiKey,
-        apiUrl: container.dataset.apiUrl || DEFAULT_CONFIG.apiUrl
+        apiUrl: container.dataset.apiUrl || getAutoApiUrl()
+        // Auto-detect if not specified
       };
       console.log("🔍 Auto-initializing Magic Widget");
+      console.log("🌐 Environment detected:", window.location.hostname);
+      console.log("🔌 Using API URL:", config.apiUrl);
       return initMagicWidget(container, config);
     }
     console.log("ℹ️ No magic-widget-container found for auto-init");
