@@ -515,6 +515,26 @@
           "✨ Effects: ",
           Array.isArray(displayParams.effects) ? displayParams.effects.join(", ") : displayParams.effects
         ] }),
+        displayParams.flavor && displayParams.flavor.length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "param-tag", children: [
+          "🍃 Flavor: ",
+          Array.isArray(displayParams.flavor) ? displayParams.flavor.join(", ") : displayParams.flavor
+        ] }),
+        displayParams.activity && displayParams.activity.length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "param-tag", children: [
+          "🎯 Activity: ",
+          Array.isArray(displayParams.activity) ? displayParams.activity.join(", ") : displayParams.activity
+        ] }),
+        displayParams.mood && displayParams.mood.length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "param-tag", children: [
+          "😌 Mood: ",
+          Array.isArray(displayParams.mood) ? displayParams.mood.join(", ") : displayParams.mood
+        ] }),
+        displayParams.setting && displayParams.setting.length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "param-tag", children: [
+          "🏠 Setting: ",
+          Array.isArray(displayParams.setting) ? displayParams.setting.join(", ") : displayParams.setting
+        ] }),
+        displayParams.experience && displayParams.experience.length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "param-tag", children: [
+          "✨ Experience: ",
+          Array.isArray(displayParams.experience) ? displayParams.experience.join(", ") : displayParams.experience
+        ] }),
         displayParams.price && /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "param-tag priority", children: [
           "💰 Price: around $",
           Math.round(displayParams.price)
