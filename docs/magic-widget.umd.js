@@ -701,11 +701,21 @@
     isMiniView,
     showDebug,
     onToggleMiniView,
-    onToggleDebug
+    onToggleDebug,
+    onResetSession
   }) => {
     return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "widget-header", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "header-left", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "widget-title", children: "🌿 Budtender" }) }),
       /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "header-right", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "button",
+          {
+            className: "reset-toggle",
+            onClick: onResetSession,
+            title: "Reset session and start fresh",
+            children: "🔄 Reset"
+          }
+        ),
         /* @__PURE__ */ jsxRuntimeExports.jsx(
           "button",
           {
@@ -769,6 +779,24 @@
         console.error("❌ API request failed:", error);
         throw error;
       }
+    }
+    /**
+     * Create a new chat session for the widget
+     */
+    async createSession() {
+      const url = `${this.apiUrl}/chat-v2/tenant/${this.tenantId}/chat`;
+      const payload = {
+        message: "Initialize session",
+        // Minimal message to trigger session creation
+        experience_level: "beginner"
+      };
+      console.log("🆔 Creating new session...");
+      const result = await this.makeRequest(url, {
+        method: "POST",
+        body: JSON.stringify(payload)
+      });
+      console.log("✅ Session created:", result.session_id);
+      return result.session_id;
     }
     /**
      * Get category statistics for filter configuration
@@ -935,18 +963,47 @@
     const initialize = require$$0$1.useCallback(async () => {
       try {
         setInitializing(true);
-        const stats = await apiClient.getCategoryStats();
+        console.log("🚀 Starting parallel initialization...");
+        const startTime = performance.now();
+        const [newSessionId, stats, response] = await Promise.all([
+          apiClient.createSession(),
+          apiClient.getCategoryStats(),
+          apiClient.getRecommendations("", {}, 3)
+        ]);
+        const loadTime = performance.now() - startTime;
+        setSessionId(newSessionId);
         setCategoryStats(stats.categories || {});
-        const response = await apiClient.getRecommendations("", {}, 3);
         setProducts(response.results || response || []);
-        console.log("✅ Magic Widget initialized successfully");
+        console.log(`✅ Magic Widget initialized successfully in ${loadTime.toFixed(0)}ms with session:`, newSessionId);
       } catch (error) {
         console.error("❌ Magic Widget initialization failed:", error);
         setProducts([]);
+        setSessionId(null);
       } finally {
         setInitializing(false);
       }
     }, [apiClient]);
+    const resetSession = require$$0$1.useCallback(async () => {
+      console.log("🔄 Resetting widget session...");
+      try {
+        setSessionId(null);
+        setProducts([]);
+        setFilters({
+          category: "",
+          effects: "",
+          price: null,
+          thc: null,
+          cbd: null
+        });
+        setExtractedParams(null);
+        setPsychologyGuidance(null);
+        setAccumulatedParams({});
+        await initialize();
+        console.log("✅ Widget session reset successfully");
+      } catch (error) {
+        console.error("❌ Failed to reset session:", error);
+      }
+    }, [initialize]);
     const calculateRange = require$$0$1.useCallback((midpoint, percentage = 20) => {
       if (!midpoint || midpoint <= 0) return null;
       const delta = midpoint * percentage / 100;
@@ -1026,6 +1083,7 @@
       setAccumulatedParams,
       // Actions
       initialize,
+      resetSession,
       calculateRange,
       // API client
       apiClient,
@@ -1251,6 +1309,7 @@
       setAccumulatedParams,
       // Initialization
       initialize,
+      resetSession,
       // API client
       apiClient,
       // Debug state
@@ -1401,6 +1460,18 @@
     const handleToggleDebug = require$$0$1.useCallback(() => {
       setShowDebug((prev) => !prev);
     }, [setShowDebug]);
+    const handleResetSession = require$$0$1.useCallback(async () => {
+      console.log("🔄 Resetting widget session and chat...");
+      setMessages([
+        {
+          id: 1,
+          role: "assistant",
+          content: "Hi! I'm your budtender. Tell me what you're looking for or ask me anything!",
+          timestamp: /* @__PURE__ */ new Date()
+        }
+      ]);
+      await resetSession();
+    }, [resetSession]);
     require$$0$1.useEffect(() => {
       const adjustPageLayout = () => {
         const widget = document.querySelector(".magic-widget");
@@ -1436,7 +1507,8 @@
               isMiniView,
               showDebug,
               onToggleMiniView: handleToggleMiniView,
-              onToggleDebug: handleToggleDebug
+              onToggleDebug: handleToggleDebug,
+              onResetSession: handleResetSession
             }
           ),
           /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "widget-content", children: [
