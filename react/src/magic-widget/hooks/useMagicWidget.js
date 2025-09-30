@@ -32,27 +32,65 @@ export const useMagicWidget = (config = {}) => {
   // API client instance
   const apiClient = useMemo(() => new MagicAPIClient(config), [config]);
 
-  // Initialize widget - replaces complex init method
+  // Initialize widget - optimized with parallel loading
   const initialize = useCallback(async () => {
     try {
       setInitializing(true);
       
-      // Load category stats
-      const stats = await apiClient.getCategoryStats();
-      setCategoryStats(stats.categories || {});
+      console.log('🚀 Starting parallel initialization...');
+      const startTime = performance.now();
       
-      // Load initial products
-      const response = await apiClient.getRecommendations('', {}, 3);
+      // Run all three API calls in parallel for faster loading
+      const [newSessionId, stats, response] = await Promise.all([
+        apiClient.createSession(),
+        apiClient.getCategoryStats(),
+        apiClient.getRecommendations('', {}, 3)
+      ]);
+      
+      const loadTime = performance.now() - startTime;
+      
+      // Update state with parallel results
+      setSessionId(newSessionId);
+      setCategoryStats(stats.categories || {});
       setProducts(response.results || response || []);
       
-      console.log('✅ Magic Widget initialized successfully');
+      console.log(`✅ Magic Widget initialized successfully in ${loadTime.toFixed(0)}ms with session:`, newSessionId);
     } catch (error) {
       console.error('❌ Magic Widget initialization failed:', error);
       setProducts([]);
+      setSessionId(null);
     } finally {
       setInitializing(false);
     }
   }, [apiClient]);
+
+  // Reset session and all state
+  const resetSession = useCallback(async () => {
+    console.log('🔄 Resetting widget session...');
+    
+    try {
+      // Clear all state immediately for instant UI feedback
+      setSessionId(null);
+      setProducts([]);
+      setFilters({
+        category: '',
+        effects: '',
+        price: null,
+        thc: null,
+        cbd: null
+      });
+      setExtractedParams(null);
+      setPsychologyGuidance(null);
+      setAccumulatedParams({});
+      
+      // Reinitialize with fresh session
+      await initialize();
+      
+      console.log('✅ Widget session reset successfully');
+    } catch (error) {
+      console.error('❌ Failed to reset session:', error);
+    }
+  }, [initialize]);
 
   // Legacy updateProducts function removed - now handled by parameter endpoint
 
@@ -158,6 +196,7 @@ export const useMagicWidget = (config = {}) => {
     
     // Actions
     initialize,
+    resetSession,
     calculateRange,
     
     // API client

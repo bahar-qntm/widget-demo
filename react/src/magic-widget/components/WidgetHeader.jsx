@@ -4,7 +4,8 @@ const WidgetHeader = ({
   isMiniView, 
   showDebug, 
   onToggleMiniView, 
-  onToggleDebug 
+  onToggleDebug,
+  onResetSession 
 }) => {
   return (
     <div className="widget-header">
@@ -13,6 +14,14 @@ const WidgetHeader = ({
       </div>
       
       <div className="header-right">
+        <button 
+          className="reset-toggle"
+          onClick={onResetSession}
+          title="Reset session and start fresh"
+        >
+          🔄 Reset
+        </button>
+        
         <button 
           className="debug-toggle"
           onClick={onToggleDebug}

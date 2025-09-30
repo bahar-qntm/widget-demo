@@ -43,6 +43,7 @@ const MagicWidget = ({ config = {} }) => {
     
     // Initialization
     initialize,
+    resetSession,
     
     // API client
     apiClient,
@@ -269,6 +270,24 @@ const MagicWidget = ({ config = {} }) => {
     setShowDebug(prev => !prev);
   }, [setShowDebug]);
 
+  // Handle session reset
+  const handleResetSession = useCallback(async () => {
+    console.log('🔄 Resetting widget session and chat...');
+    
+    // Clear messages immediately for instant UI feedback
+    setMessages([
+      {
+        id: 1,
+        role: 'assistant',
+        content: "Hi! I'm your budtender. Tell me what you're looking for or ask me anything!",
+        timestamp: new Date()
+      }
+    ]);
+    
+    // Reset session and all state
+    await resetSession();
+  }, [resetSession]);
+
   // Adjust page layout on mount and mini view changes
   useEffect(() => {
     const adjustPageLayout = () => {
@@ -311,6 +330,7 @@ const MagicWidget = ({ config = {} }) => {
         showDebug={showDebug}
         onToggleMiniView={handleToggleMiniView}
         onToggleDebug={handleToggleDebug}
+        onResetSession={handleResetSession}
       />
 
       <div className="widget-content">

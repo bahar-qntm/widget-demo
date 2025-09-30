@@ -56,6 +56,26 @@ export class MagicAPIClient {
   }
 
   /**
+   * Create a new chat session for the widget
+   */
+  async createSession() {
+    const url = `${this.apiUrl}/chat-v2/tenant/${this.tenantId}/chat`;
+    const payload = {
+      message: "Initialize session", // Minimal message to trigger session creation
+      experience_level: 'beginner'
+    };
+    
+    console.log('🆔 Creating new session...');
+    const result = await this.makeRequest(url, {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+    
+    console.log('✅ Session created:', result.session_id);
+    return result.session_id;
+  }
+
+  /**
    * Get category statistics for filter configuration
    */
   async getCategoryStats() {
