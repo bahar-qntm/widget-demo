@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Semantic Components - Magic Widget</title>
+    <link rel="stylesheet" href="dist/style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-title {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+        }
+        .test-section h3 {
+            margin-top: 0;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1 class="test-title">🧪 Semantic Components Test</h1>
+        <p>Testing the new semantic components added to the "AI Detected Your Preferences" panel:</p>
+        
+        <div class="test-section">
+            <h3>Test Case 1: All New Semantic Components</h3>
+            <p>This should display: Flavor, Activity, Mood, Setting, Experience</p>
+            <div id="test-widget-1"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>Test Case 2: Mixed Components (Original + New)</h3>
+            <p>This should display both original and new components together</p>
+            <div id="test-widget-2"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>Test Case 3: Single Values</h3>
+            <p>Testing single string values instead of arrays</p>
+            <div id="test-widget-3"></div>
+        </div>
+    </div>
+
+    <script src="dist/magic-widget.umd.js"></script>
+    <script>
+        console.log('🚀 Testing new semantic components');
+        
+        // Test Case 1: All new semantic components
+        const container1 = document.getElementById('test-widget-1');
+        const testWidget1 = MagicWidget.init(container1, {
+            mockMode: true,
+            initialData: {
+                extractedParams: {
+                    extracted: {
+                        flavor: ['citrus', 'pine', 'earthy'],
+                        activity: ['studying', 'reading', 'focusing'],
+                        mood: ['stressed', 'anxious', 'overwhelmed'],
+                        setting: ['home', 'quiet', 'private'],
+                        experience: ['mental clarity', 'deep focus', 'calm concentration'],
+                        confidence_score: 0.95
+                    }
+                }
+            }
+        });
+
+        // Test Case 2: Mixed components (original + new)
+        const container2 = document.getElementById('test-widget-2');
+        const testWidget2 = MagicWidget.init(container2, {
+            mockMode: true,
+            initialData: {
+                extractedParams: {
+                    extracted: {
+                        // Original components
+                        brand: 'Cookies',
+                        categories: ['flower'],
+                        effects: ['relaxation', 'pain relief'],
+                        price: 85.0,
+                        thc: 24.5,
+                        potency_preference: 'moderate',
+                        time_of_use: 'evening',
+                        // New semantic components
+                        flavor: ['fruity', 'berry', 'sweet'],
+                        activity: ['gaming', 'socializing'],
+                        mood: ['happy', 'excited'],
+                        setting: ['friends', 'indoor'],
+                        experience: ['euphoria', 'creativity'],
+                        confidence_score: 0.88
+                    }
+                }
+            }
+        });
+
+        // Test Case 3: Single string values
+        const container3 = document.getElementById('test-widget-3');
+        const testWidget3 = MagicWidget.init(container3, {
+            mockMode: true,
+            initialData: {
+                extractedParams: {
+                    extracted: {
+                        flavor: 'tropical',
+                        activity: 'yoga',
+                        mood: 'peaceful',
+                        setting: 'outdoors',
+                        experience: 'mindfulness',
+                        confidence_score: 0.77
+                    }
+                }
+            }
+        });
+
+        console.log('✅ Test widgets initialized');
+    </script>
+</body>
+</html>

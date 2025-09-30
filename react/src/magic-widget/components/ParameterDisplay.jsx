@@ -50,6 +50,51 @@ const ParameterDisplay = ({ extractedParams, accumulatedParams }) => {
           </span>
         )}
         
+        {/* Flavor */}
+        {displayParams.flavor && displayParams.flavor.length > 0 && (
+          <span className="param-tag">
+            🍃 Flavor: {Array.isArray(displayParams.flavor) 
+              ? displayParams.flavor.join(', ') 
+              : displayParams.flavor}
+          </span>
+        )}
+        
+        {/* Activity */}
+        {displayParams.activity && displayParams.activity.length > 0 && (
+          <span className="param-tag">
+            🎯 Activity: {Array.isArray(displayParams.activity) 
+              ? displayParams.activity.join(', ') 
+              : displayParams.activity}
+          </span>
+        )}
+        
+        {/* Mood */}
+        {displayParams.mood && displayParams.mood.length > 0 && (
+          <span className="param-tag">
+            😌 Mood: {Array.isArray(displayParams.mood) 
+              ? displayParams.mood.join(', ') 
+              : displayParams.mood}
+          </span>
+        )}
+        
+        {/* Setting */}
+        {displayParams.setting && displayParams.setting.length > 0 && (
+          <span className="param-tag">
+            🏠 Setting: {Array.isArray(displayParams.setting) 
+              ? displayParams.setting.join(', ') 
+              : displayParams.setting}
+          </span>
+        )}
+        
+        {/* Experience */}
+        {displayParams.experience && displayParams.experience.length > 0 && (
+          <span className="param-tag">
+            ✨ Experience: {Array.isArray(displayParams.experience) 
+              ? displayParams.experience.join(', ') 
+              : displayParams.experience}
+          </span>
+        )}
+        
         {/* Price - Single value (new proximity system) */}
         {displayParams.price && (
           <span className="param-tag priority">
