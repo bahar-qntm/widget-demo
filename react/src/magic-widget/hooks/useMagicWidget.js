@@ -54,22 +54,7 @@ export const useMagicWidget = (config = {}) => {
     }
   }, [apiClient]);
 
-  // Update products with loading state management
-  const updateProducts = useCallback(async (searchCriteria = {}) => {
-    if (loading) return; // Prevent concurrent requests
-    
-    setLoading(true);
-    try {
-      const response = await apiClient.getFilteredProducts(searchCriteria, sessionId);
-      setProducts(response.products || []);
-      console.log('✅ Products updated:', response.products?.length || 0);
-    } catch (error) {
-      console.error('❌ Failed to update products:', error);
-      setProducts([]);
-    } finally {
-      setLoading(false);
-    }
-  }, [apiClient, sessionId, loading]);
+  // Legacy updateProducts function removed - now handled by parameter endpoint
 
   // Calculate filter ranges using midpoint ±20% logic
   const calculateRange = useCallback((midpoint, percentage = 20) => {
@@ -173,7 +158,6 @@ export const useMagicWidget = (config = {}) => {
     
     // Actions
     initialize,
-    updateProducts,
     calculateRange,
     
     // API client

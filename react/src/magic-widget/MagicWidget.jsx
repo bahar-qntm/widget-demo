@@ -185,93 +185,79 @@ const MagicWidget = ({ config = {} }) => {
     await sendStreamingMessage(message);
   }, [sendStreamingMessage]);
 
-  // Handle filter changes from UI (race-condition-free approach)
+  // Handle filter changes from UI (single API call approach)
   const handleFilterChange = useCallback(async (newFilters, shouldSearch = true) => {
     // 1. Update React state immediately (instant UI feedback)
     const updatedFilters = { ...filters, ...newFilters };
     setFilters(updatedFilters);
     
-    if (shouldSearch && !streaming) {
+    if (shouldSearch && !streaming && sessionId) {
       setLoading(true);
       try {
-        // 2. Search for products immediately (direct search, no chat involvement)
-        const searchCriteria = filtersToSearchCriteria(updatedFilters);
-        console.log('🔍 UI filter change - searching with criteria:', searchCriteria);
-        
-        const response = await apiClient.getFilteredProducts(searchCriteria, sessionId);
-        setProducts(response.products || []);
-        console.log('✅ Products updated from UI filter change:', response.products?.length || 0);
-        
-        // 3. Check if this is a significant filter change that warrants AI explanation
+        // 2. Check if this is a significant filter change that warrants AI explanation
         const isSignificantChange = 
           (newFilters.category && newFilters.category !== filters.category) ||
           (newFilters.effects && newFilters.effects !== filters.effects) ||
-          (newFilters.price && Math.abs((newFilters.price || 0) - (filters.price || 0)) > 20);
+          (newFilters.price && Math.abs((newFilters.price || 0) - (filters.price || 0)) > 20) ||
+          (newFilters.thc !== undefined && Math.abs((newFilters.thc || 0) - (filters.thc || 0)) > 5) ||
+          (newFilters.cbd !== undefined && Math.abs((newFilters.cbd || 0) - (filters.cbd || 0)) > 5);
         
-        // 4. Update session parameters with AI response for significant changes
-        if (sessionId) {
-          if (isSignificantChange) {
-            console.log('💬 Significant filter change detected - generating AI explanation');
-            
-            // Show typing indicator using same system as chat (consistent styling)
-            setProgress({ 
-              icon: '✏️', 
-              message: 'Typing', 
-              typing: true 
-            });
-            
-            try {
-              const sessionResponse = await apiClient.updateSessionParameters(
-                sessionId, 
-                updatedFilters, 
-                true // generate_ai_response=true for AI explanation
-              );
-              
-              // Clear typing indicator and add actual AI response
-              setProgress(null);
-              
-              if (sessionResponse.ai_response) {
-                const aiMessage = {
-                  id: Date.now(),
-                  role: 'assistant',
-                  content: sessionResponse.ai_response,
-                  timestamp: new Date(),
-                  isFilterResponse: true // Mark as filter-generated response
-                };
-                
-                setMessages(prev => [...prev, aiMessage]);
-                console.log('🤖 Added AI filter change explanation to chat');
-              }
-              
-              // ✅ FIX: Update accumulated parameters state from backend response
-              if (sessionResponse.accumulated_parameters) {
-                setAccumulatedParams(sessionResponse.accumulated_parameters);
-                console.log('💾 Updated accumulated parameters from UI filter change:', sessionResponse.accumulated_parameters);
-              }
-            } catch (error) {
-              // Clear typing indicator on error
-              setProgress(null);
-              console.error('❌ Failed to generate AI response for filter change:', error);
-            }
-          } else {
-            // Just update session without AI response for minor changes
-            const sessionResponse = await apiClient.updateSessionParameters(sessionId, updatedFilters);
-            console.log('💾 Session updated in background (minor change)');
-            
-            // ✅ FIX: Update accumulated parameters state from backend response (minor changes)
-            if (sessionResponse.accumulated_parameters) {
-              setAccumulatedParams(sessionResponse.accumulated_parameters);
-              console.log('💾 Updated accumulated parameters from minor UI filter change:', sessionResponse.accumulated_parameters);
-            }
-          }
+        if (isSignificantChange) {
+          console.log('💬 Significant filter change detected - using parameter endpoint with AI response');
+          
+          // Show typing indicator using same system as chat (consistent styling)
+          setProgress({ 
+            icon: '✏️', 
+            message: 'Typing', 
+            typing: true 
+          });
         }
+        
+        // 3. SINGLE API call to parameter endpoint (handles both products AND session update)
+        const sessionResponse = await apiClient.updateSessionParameters(
+          sessionId, 
+          updatedFilters, 
+          isSignificantChange // generate_ai_response=true only for significant changes
+        );
+        
+        // Clear typing indicator 
+        setProgress(null);
+        
+        // 4. Update products from parameter endpoint response
+        if (sessionResponse.products) {
+          setProducts(sessionResponse.products);
+          console.log('✅ Products updated from parameter endpoint:', sessionResponse.products.length);
+        }
+        
+        // 5. Add AI response to chat if generated
+        if (sessionResponse.ai_response) {
+          const aiMessage = {
+            id: Date.now(),
+            role: 'assistant',
+            content: sessionResponse.ai_response,
+            timestamp: new Date(),
+            isFilterResponse: true // Mark as filter-generated response
+          };
+          
+          setMessages(prev => [...prev, aiMessage]);
+          console.log('🤖 Added AI filter change explanation to chat');
+        }
+        
+        // 6. Update accumulated parameters state from backend response
+        if (sessionResponse.accumulated_parameters) {
+          setAccumulatedParams(sessionResponse.accumulated_parameters);
+          console.log('💾 Updated accumulated parameters from UI filter change:', sessionResponse.accumulated_parameters);
+        }
+        
       } catch (error) {
-        console.error('❌ Failed to update products from filter change:', error);
+        // Clear typing indicator on error
+        setProgress(null);
+        console.error('❌ Failed to update filters and products:', error);
       } finally {
         setLoading(false);
       }
     }
-  }, [filters, setFilters, streaming, sessionId, setLoading, apiClient, filtersToSearchCriteria, setProducts, setMessages, setProgress]);
+  }, [filters, setFilters, streaming, sessionId, setLoading, apiClient, setProducts, setMessages, setProgress, setAccumulatedParams]);
 
   // Handle mini view toggle
   const handleToggleMiniView = useCallback(() => {

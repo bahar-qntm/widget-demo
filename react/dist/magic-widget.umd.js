@@ -761,135 +761,6 @@
       return result;
     }
     /**
-     * Get filtered products using streaming-first approach with automatic fallback
-     */
-    async getFilteredProducts(filters, sessionId = null, onProgress = null) {
-      var _a, _b;
-      const filterDescription = [];
-      if (((_a = filters.product_categories) == null ? void 0 : _a.length) > 0) {
-        filterDescription.push(`category: ${filters.product_categories.join(", ")}`);
-      }
-      if (filters.price) {
-        filterDescription.push(`price: around $${filters.price}`);
-      }
-      if (filters.thc) {
-        filterDescription.push(`THC: around ${filters.thc}%`);
-      }
-      if (filters.cbd) {
-        filterDescription.push(`CBD: around ${filters.cbd}mg`);
-      }
-      if (((_b = filters.desired_effects) == null ? void 0 : _b.length) > 0) {
-        filterDescription.push(`effects: ${filters.desired_effects.join(", ")}`);
-      }
-      const syntheticQuery = filterDescription.length > 0 ? `Show me products with ${filterDescription.join(", ")}` : "Show me products";
-      console.log("🔍 Filter interaction using streaming-first approach:", syntheticQuery);
-      try {
-        if (onProgress) onProgress({ icon: "🎯", message: "Updating filters..." });
-        return await this._streamingFilterRequest(syntheticQuery, sessionId, filters, onProgress);
-      } catch (streamingError) {
-        console.log("🔄 Streaming failed, falling back to regular endpoint:", streamingError.message);
-        if (onProgress) onProgress({ icon: "🔄", message: "Retrying..." });
-        return await this._regularFilterRequest(syntheticQuery, sessionId, filters);
-      }
-    }
-    /**
-     * Streaming filter request (primary method)
-     */
-    async _streamingFilterRequest(syntheticQuery, sessionId, filters, onProgress) {
-      var _a;
-      const streamUrl = `${this.apiUrl}/chat-v2/tenant/${this.tenantId}/chat/stream`;
-      const payload = {
-        message: syntheticQuery,
-        session_id: sessionId,
-        current_filters: filters,
-        experience_level: "beginner"
-      };
-      const response = await fetch(streamUrl, {
-        method: "POST",
-        headers: this.getHeaders(),
-        body: JSON.stringify(payload)
-      });
-      if (!response.ok) {
-        throw new Error(`Streaming failed: ${response.status}`);
-      }
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-      let streamedData = {
-        products: [],
-        updated_filters: {},
-        psychology_guidance: {},
-        education_stage: "awareness",
-        trust_building_elements: []
-      };
-      try {
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          const chunk = decoder.decode(value);
-          const lines = chunk.split("\n");
-          for (const line of lines) {
-            if (line.startsWith("data: ")) {
-              const data = line.slice(6);
-              if (data === "[DONE]") break;
-              try {
-                const parsed = JSON.parse(data);
-                switch (parsed.type) {
-                  case "progress":
-                    if (onProgress) {
-                      onProgress({
-                        icon: parsed.icon,
-                        message: parsed.message,
-                        typing: parsed.typing || false
-                      });
-                    }
-                    break;
-                  case "products":
-                    streamedData.products = parsed.products;
-                    break;
-                  case "filter_updates":
-                    streamedData.updated_filters = parsed.filters;
-                    break;
-                  case "psychology_guidance":
-                    streamedData.psychology_guidance = parsed.psychology_guidance;
-                    streamedData.education_stage = parsed.education_stage;
-                    streamedData.trust_building_elements = parsed.trust_building_elements;
-                    break;
-                  case "error":
-                    throw new Error(parsed.message);
-                }
-              } catch (parseError) {
-              }
-            }
-          }
-        }
-      } finally {
-        reader.releaseLock();
-        if (onProgress) onProgress(null);
-      }
-      console.log("✅ Streaming filter request completed:", ((_a = streamedData.products) == null ? void 0 : _a.length) || 0, "products");
-      return streamedData;
-    }
-    /**
-     * Regular filter request (fallback method)
-     */
-    async _regularFilterRequest(syntheticQuery, sessionId, filters) {
-      var _a;
-      const url = `${this.apiUrl}/chat-v2/tenant/${this.tenantId}/chat`;
-      const payload = {
-        message: syntheticQuery,
-        session_id: sessionId,
-        current_filters: filters,
-        experience_level: "beginner"
-      };
-      console.log("🔄 Using regular endpoint fallback for filters");
-      const result = await this.makeRequest(url, {
-        method: "POST",
-        body: JSON.stringify(payload)
-      });
-      console.log("✅ Regular filter request completed:", ((_a = result.products) == null ? void 0 : _a.length) || 0, "products");
-      return result;
-    }
-    /**
      * Get product recommendations (for initial load)
      */
     async getRecommendations(query, profile, limit = 3) {
@@ -912,7 +783,7 @@
       if (generateAIResponse) {
         url.searchParams.append("generate_ai_response", "true");
       }
-      console.log("💾 Updating session parameters:", {
+      console.log("� Updating session parameters:", {
         sessionId,
         filters,
         generateAIResponse
@@ -1056,21 +927,6 @@
         setInitializing(false);
       }
     }, [apiClient]);
-    const updateProducts = require$$0$1.useCallback(async (searchCriteria = {}) => {
-      var _a;
-      if (loading) return;
-      setLoading(true);
-      try {
-        const response = await apiClient.getFilteredProducts(searchCriteria, sessionId);
-        setProducts(response.products || []);
-        console.log("✅ Products updated:", ((_a = response.products) == null ? void 0 : _a.length) || 0);
-      } catch (error) {
-        console.error("❌ Failed to update products:", error);
-        setProducts([]);
-      } finally {
-        setLoading(false);
-      }
-    }, [apiClient, sessionId, loading]);
     const calculateRange = require$$0$1.useCallback((midpoint, percentage = 20) => {
       if (!midpoint || midpoint <= 0) return null;
       const delta = midpoint * percentage / 100;
@@ -1150,7 +1006,6 @@
       setAccumulatedParams,
       // Actions
       initialize,
-      updateProducts,
       calculateRange,
       // API client
       apiClient,
@@ -1366,7 +1221,6 @@
       filters,
       setFilters,
       categoryStats,
-      filtersToSearchCriteria,
       // Loading states
       loading,
       setLoading,
@@ -1472,70 +1326,55 @@
       await sendStreamingMessage(message);
     }, [sendStreamingMessage]);
     const handleFilterChange = require$$0$1.useCallback(async (newFilters, shouldSearch = true) => {
-      var _a;
       const updatedFilters = { ...filters, ...newFilters };
       setFilters(updatedFilters);
-      if (shouldSearch && !streaming) {
+      if (shouldSearch && !streaming && sessionId) {
         setLoading(true);
         try {
-          const searchCriteria = filtersToSearchCriteria(updatedFilters);
-          console.log("🔍 UI filter change - searching with criteria:", searchCriteria);
-          const response = await apiClient.getFilteredProducts(searchCriteria, sessionId);
-          setProducts(response.products || []);
-          console.log("✅ Products updated from UI filter change:", ((_a = response.products) == null ? void 0 : _a.length) || 0);
-          const isSignificantChange = newFilters.category && newFilters.category !== filters.category || newFilters.effects && newFilters.effects !== filters.effects || newFilters.price && Math.abs((newFilters.price || 0) - (filters.price || 0)) > 20;
-          if (sessionId) {
-            if (isSignificantChange) {
-              console.log("💬 Significant filter change detected - generating AI explanation");
-              setProgress({
-                icon: "✏️",
-                message: "Typing",
-                typing: true
-              });
-              try {
-                const sessionResponse = await apiClient.updateSessionParameters(
-                  sessionId,
-                  updatedFilters,
-                  true
-                  // generate_ai_response=true for AI explanation
-                );
-                setProgress(null);
-                if (sessionResponse.ai_response) {
-                  const aiMessage = {
-                    id: Date.now(),
-                    role: "assistant",
-                    content: sessionResponse.ai_response,
-                    timestamp: /* @__PURE__ */ new Date(),
-                    isFilterResponse: true
-                    // Mark as filter-generated response
-                  };
-                  setMessages((prev) => [...prev, aiMessage]);
-                  console.log("🤖 Added AI filter change explanation to chat");
-                }
-                if (sessionResponse.accumulated_parameters) {
-                  setAccumulatedParams(sessionResponse.accumulated_parameters);
-                  console.log("💾 Updated accumulated parameters from UI filter change:", sessionResponse.accumulated_parameters);
-                }
-              } catch (error) {
-                setProgress(null);
-                console.error("❌ Failed to generate AI response for filter change:", error);
-              }
-            } else {
-              const sessionResponse = await apiClient.updateSessionParameters(sessionId, updatedFilters);
-              console.log("💾 Session updated in background (minor change)");
-              if (sessionResponse.accumulated_parameters) {
-                setAccumulatedParams(sessionResponse.accumulated_parameters);
-                console.log("💾 Updated accumulated parameters from minor UI filter change:", sessionResponse.accumulated_parameters);
-              }
-            }
+          const isSignificantChange = newFilters.category && newFilters.category !== filters.category || newFilters.effects && newFilters.effects !== filters.effects || newFilters.price && Math.abs((newFilters.price || 0) - (filters.price || 0)) > 20 || newFilters.thc !== void 0 && Math.abs((newFilters.thc || 0) - (filters.thc || 0)) > 5 || newFilters.cbd !== void 0 && Math.abs((newFilters.cbd || 0) - (filters.cbd || 0)) > 5;
+          if (isSignificantChange) {
+            console.log("💬 Significant filter change detected - using parameter endpoint with AI response");
+            setProgress({
+              icon: "✏️",
+              message: "Typing",
+              typing: true
+            });
+          }
+          const sessionResponse = await apiClient.updateSessionParameters(
+            sessionId,
+            updatedFilters,
+            isSignificantChange
+            // generate_ai_response=true only for significant changes
+          );
+          setProgress(null);
+          if (sessionResponse.products) {
+            setProducts(sessionResponse.products);
+            console.log("✅ Products updated from parameter endpoint:", sessionResponse.products.length);
+          }
+          if (sessionResponse.ai_response) {
+            const aiMessage = {
+              id: Date.now(),
+              role: "assistant",
+              content: sessionResponse.ai_response,
+              timestamp: /* @__PURE__ */ new Date(),
+              isFilterResponse: true
+              // Mark as filter-generated response
+            };
+            setMessages((prev) => [...prev, aiMessage]);
+            console.log("🤖 Added AI filter change explanation to chat");
+          }
+          if (sessionResponse.accumulated_parameters) {
+            setAccumulatedParams(sessionResponse.accumulated_parameters);
+            console.log("💾 Updated accumulated parameters from UI filter change:", sessionResponse.accumulated_parameters);
           }
         } catch (error) {
-          console.error("❌ Failed to update products from filter change:", error);
+          setProgress(null);
+          console.error("❌ Failed to update filters and products:", error);
         } finally {
           setLoading(false);
         }
       }
-    }, [filters, setFilters, streaming, sessionId, setLoading, apiClient, filtersToSearchCriteria, setProducts, setMessages, setProgress]);
+    }, [filters, setFilters, streaming, sessionId, setLoading, apiClient, setProducts, setMessages, setProgress, setAccumulatedParams]);
     const handleToggleMiniView = require$$0$1.useCallback(() => {
       setIsMiniView((prev) => !prev);
     }, [setIsMiniView]);
