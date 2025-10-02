@@ -111,14 +111,14 @@ export const useMagicWidget = (config = {}) => {
   const filtersToSearchCriteria = useCallback((currentFilters) => {
     const criteria = {};
     
-    // Category
+    // Category - use canonical field name
     if (currentFilters.category) {
-      criteria.product_categories = [currentFilters.category];
+      criteria.categories = [currentFilters.category];
     }
     
-    // Effects
+    // Effects - use canonical field name
     if (currentFilters.effects) {
-      criteria.desired_effects = [currentFilters.effects];
+      criteria.effects = [currentFilters.effects];
     }
     
     // Single price value (proximity-based scoring)

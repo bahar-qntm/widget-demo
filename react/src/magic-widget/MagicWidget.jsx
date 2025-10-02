@@ -81,35 +81,33 @@ const MagicWidget = ({ config = {} }) => {
     );
   }, []);
 
-  // Elegant backend-to-React filter conversion (replaces vanilla JS complexity)
+  // Backend-to-React filter conversion using canonical field names
   const convertBackendToReactFilters = useCallback((backendFilters) => {
     const converted = {};
     
-    // Convert category format: product_categories: ["flower"] → category: "Flower"
-    if (backendFilters.product_categories?.length > 0) {
-      const category = backendFilters.product_categories[0];
+    // Convert category format: categories: ["flower"] → category: "Flower"
+    if (backendFilters.categories?.length > 0) {
+      const category = backendFilters.categories[0];
       // Capitalize first letter to match FilterPanel options
       converted.category = category.charAt(0).toUpperCase() + category.slice(1);
     }
     
-    // Convert price range to midpoint: price_min: 64, price_max: 96 → price: 80
-    if (backendFilters.price_min && backendFilters.price_max) {
-      converted.price = (backendFilters.price_min + backendFilters.price_max) / 2;
+    // Convert effects format: effects: ["relaxing"] → effects: "relaxing"
+    if (backendFilters.effects?.length > 0) {
+      converted.effects = backendFilters.effects[0];
     }
     
-    // Convert effects format: desired_effects: ["relaxing"] → effects: "relaxing"
-    if (backendFilters.desired_effects?.length > 0) {
-      converted.effects = backendFilters.desired_effects[0];
+    // Direct value mapping for single values
+    if (backendFilters.price) {
+      converted.price = backendFilters.price;
     }
     
-    // Convert THC range to midpoint: thc_min: 20, thc_max: 30 → thc: 25
-    if (backendFilters.thc_min && backendFilters.thc_max) {
-      converted.thc = (backendFilters.thc_min + backendFilters.thc_max) / 2;
+    if (backendFilters.thc) {
+      converted.thc = backendFilters.thc;
     }
     
-    // Convert CBD range to midpoint: cbd_min: 8, cbd_max: 12 → cbd: 10
-    if (backendFilters.cbd_min && backendFilters.cbd_max) {
-      converted.cbd = (backendFilters.cbd_min + backendFilters.cbd_max) / 2;
+    if (backendFilters.cbd) {
+      converted.cbd = backendFilters.cbd;
     }
     
     return converted;

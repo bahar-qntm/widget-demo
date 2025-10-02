@@ -130,6 +130,7 @@ const FilterPanel = ({
                 <option value="focused">Focused</option>
                 <option value="relaxing">Relaxing</option>
                 <option value="sedating">Sedating</option>
+                <option value="sleep">Sleep</option>
               </select>
             </div>
           )}
