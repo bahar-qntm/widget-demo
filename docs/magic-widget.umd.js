@@ -407,7 +407,8 @@
                   /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: "euphoric", children: "Euphoric" }),
                   /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: "focused", children: "Focused" }),
                   /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: "relaxing", children: "Relaxing" }),
-                  /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: "sedating", children: "Sedating" })
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: "sedating", children: "Sedating" }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: "sleep", children: "Sleep" })
                 ]
               }
             )
@@ -1017,10 +1018,10 @@
     const filtersToSearchCriteria = require$$0$1.useCallback((currentFilters) => {
       const criteria = {};
       if (currentFilters.category) {
-        criteria.product_categories = [currentFilters.category];
+        criteria.categories = [currentFilters.category];
       }
       if (currentFilters.effects) {
-        criteria.desired_effects = [currentFilters.effects];
+        criteria.effects = [currentFilters.effects];
       }
       if (currentFilters.price) {
         criteria.price = currentFilters.price;
@@ -1332,21 +1333,21 @@
     const convertBackendToReactFilters = require$$0$1.useCallback((backendFilters) => {
       var _a, _b;
       const converted = {};
-      if (((_a = backendFilters.product_categories) == null ? void 0 : _a.length) > 0) {
-        const category = backendFilters.product_categories[0];
+      if (((_a = backendFilters.categories) == null ? void 0 : _a.length) > 0) {
+        const category = backendFilters.categories[0];
         converted.category = category.charAt(0).toUpperCase() + category.slice(1);
       }
-      if (backendFilters.price_min && backendFilters.price_max) {
-        converted.price = (backendFilters.price_min + backendFilters.price_max) / 2;
+      if (((_b = backendFilters.effects) == null ? void 0 : _b.length) > 0) {
+        converted.effects = backendFilters.effects[0];
       }
-      if (((_b = backendFilters.desired_effects) == null ? void 0 : _b.length) > 0) {
-        converted.effects = backendFilters.desired_effects[0];
+      if (backendFilters.price) {
+        converted.price = backendFilters.price;
       }
-      if (backendFilters.thc_min && backendFilters.thc_max) {
-        converted.thc = (backendFilters.thc_min + backendFilters.thc_max) / 2;
+      if (backendFilters.thc) {
+        converted.thc = backendFilters.thc;
       }
-      if (backendFilters.cbd_min && backendFilters.cbd_max) {
-        converted.cbd = (backendFilters.cbd_min + backendFilters.cbd_max) / 2;
+      if (backendFilters.cbd) {
+        converted.cbd = backendFilters.cbd;
       }
       return converted;
     }, []);
