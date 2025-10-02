@@ -9,7 +9,7 @@ const DebugPanel = ({
   const [activeTab, setActiveTab] = useState('state');
 
   return (
-    <div className="debug-section show">
+    <div className="debug-section">
       <div className="section-title">🐛 Debug Information</div>
       
       {/* Debug Tabs */}

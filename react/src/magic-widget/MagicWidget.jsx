@@ -331,53 +331,58 @@ const MagicWidget = ({ config = {} }) => {
         onResetSession={handleResetSession}
       />
 
-      <div className="widget-content">
-        {/* Products Section - Always visible */}
-        <ProductGrid
-          products={products}
-          loading={loading || streaming}
-          isMiniView={isMiniView}
-        />
-
-        {/* Expandable Sections - Hidden in mini view */}
-        <div className={`expandable-sections ${isMiniView ? 'collapsed' : 'expanded'}`}>
-          {/* Info Displays */}
-          <div className="info-displays">
-            {extractedParams && (
-              <ParameterDisplay
-                extractedParams={extractedParams}
-                accumulatedParams={accumulatedParams}
-              />
-            )}
-            
-          </div>
-
-          {/* Filter Panel */}
-          <FilterPanel
-            filters={filters}
-            categoryStats={categoryStats}
+      <div className={`widget-content ${showDebug ? 'debug-active' : ''}`}>
+        {/* Main Content Area */}
+        <div className="main-content-area">
+          {/* Products Section - Always visible */}
+          <ProductGrid
+            products={products}
             loading={loading || streaming}
-            onFilterChange={handleFilterChange}
+            isMiniView={isMiniView}
           />
 
-          {/* Chat Interface */}
-          <ChatInterface
-            messages={messages}
-            onSendMessage={handleSendMessage}
-            streaming={streaming}
-            progress={progress}
-            disabled={loading}
-          />
+          {/* Expandable Sections - Hidden in mini view */}
+          <div className={`expandable-sections ${isMiniView ? 'collapsed' : 'expanded'}`}>
+            {/* Info Displays */}
+            <div className="info-displays">
+              {extractedParams && (
+                <ParameterDisplay
+                  extractedParams={extractedParams}
+                  accumulatedParams={accumulatedParams}
+                />
+              )}
+              
+            </div>
 
-          {/* Debug Panel */}
-          {showDebug && (
+            {/* Filter Panel */}
+            <FilterPanel
+              filters={filters}
+              categoryStats={categoryStats}
+              loading={loading || streaming}
+              onFilterChange={handleFilterChange}
+            />
+
+            {/* Chat Interface */}
+            <ChatInterface
+              messages={messages}
+              onSendMessage={handleSendMessage}
+              streaming={streaming}
+              progress={progress}
+              disabled={loading}
+            />
+          </div>
+        </div>
+
+        {/* Debug Sidebar - Right side when active */}
+        {showDebug && (
+          <div className="debug-sidebar">
             <DebugPanel
               debugState={debugState}
               filters={filters}
               extractedParams={extractedParams}
             />
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );
