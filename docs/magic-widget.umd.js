@@ -491,106 +491,73 @@
       timeout = setTimeout(later, wait);
     };
   }
-  const ParameterDisplay = ({ extractedParams, accumulatedParams }) => {
+  const ParameterDisplay = ({ extractedParams, accumulatedParams, onClearFilters }) => {
     var _a;
     const displayParams = accumulatedParams && Object.keys(accumulatedParams).length > 0 ? accumulatedParams : (extractedParams == null ? void 0 : extractedParams.extracted) || {};
     if (!displayParams || Object.keys(displayParams).length === 0) return null;
     const isAccumulatedDisplay = accumulatedParams && Object.keys(accumulatedParams).length > 0;
     const confidence = isAccumulatedDisplay ? 100 : Math.round((((_a = extractedParams == null ? void 0 : extractedParams.extracted) == null ? void 0 : _a.confidence_score) || 0) * 100);
+    const hasClearableParams = Object.keys(displayParams).some(
+      (key) => !["category", "price", "thc", "cbd"].includes(key)
+    );
     console.log("🎯 ParameterDisplay - Using accumulated params:", isAccumulatedDisplay, displayParams);
     return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "parameter-extraction-display show", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "extraction-title", children: [
         "🤖 AI Detected Your Preferences",
-        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: `confidence-score ${isAccumulatedDisplay ? "accumulated" : ""}`, children: isAccumulatedDisplay ? "Session" : `${confidence}%` })
+        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: `confidence-score ${isAccumulatedDisplay ? "accumulated" : ""}`, children: isAccumulatedDisplay ? "Session" : `${confidence}%` }),
+        hasClearableParams && onClearFilters && /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "button",
+          {
+            className: "clear-filters-btn",
+            onClick: onClearFilters,
+            title: "Clear AI-detected preferences (keeps category & sliders)",
+            children: "Clear ×"
+          }
+        )
       ] }),
-      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "extracted-params", children: [
-        displayParams.brand && /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "param-tag brand", children: [
-          "🏷️ Brand: ",
-          displayParams.brand
-        ] }),
-        displayParams.categories && displayParams.categories.length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "param-tag", children: [
-          "📦 Categories: ",
-          Array.isArray(displayParams.categories) ? displayParams.categories.join(", ") : displayParams.categories
-        ] }),
-        displayParams.effects && displayParams.effects.length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "param-tag", children: [
-          "✨ Effects: ",
-          Array.isArray(displayParams.effects) ? displayParams.effects.join(", ") : displayParams.effects
-        ] }),
-        displayParams.flavor && displayParams.flavor.length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "param-tag", children: [
-          "🍃 Flavor: ",
-          Array.isArray(displayParams.flavor) ? displayParams.flavor.join(", ") : displayParams.flavor
-        ] }),
-        displayParams.activity && displayParams.activity.length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "param-tag", children: [
-          "🎯 Activity: ",
-          Array.isArray(displayParams.activity) ? displayParams.activity.join(", ") : displayParams.activity
-        ] }),
-        displayParams.mood && displayParams.mood.length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "param-tag", children: [
-          "😌 Mood: ",
-          Array.isArray(displayParams.mood) ? displayParams.mood.join(", ") : displayParams.mood
-        ] }),
-        displayParams.setting && displayParams.setting.length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "param-tag", children: [
-          "🏠 Setting: ",
-          Array.isArray(displayParams.setting) ? displayParams.setting.join(", ") : displayParams.setting
-        ] }),
-        displayParams.experience && displayParams.experience.length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "param-tag", children: [
-          "✨ Experience: ",
-          Array.isArray(displayParams.experience) ? displayParams.experience.join(", ") : displayParams.experience
-        ] }),
-        displayParams.price && /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "param-tag priority", children: [
-          "💰 Price: around $",
-          Math.round(displayParams.price)
-        ] }),
-        !displayParams.price && displayParams.price_range && Array.isArray(displayParams.price_range) && displayParams.price_range.length === 2 && /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "param-tag priority", children: [
-          "💰 Price: $",
-          displayParams.price_range[0],
-          "-$$",
-          displayParams.price_range[1]
-        ] }),
-        displayParams.thc && /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "param-tag", children: [
-          "🌿 THC: around ",
-          Math.round(displayParams.thc * 10) / 10,
-          "%"
-        ] }),
-        !displayParams.thc && displayParams.thc_range && Array.isArray(displayParams.thc_range) && displayParams.thc_range.length === 2 && /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "param-tag", children: [
-          "🌿 THC: ",
-          displayParams.thc_range[0],
-          "-",
-          displayParams.thc_range[1],
-          "%"
-        ] }),
-        displayParams.cbd && /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "param-tag", children: [
-          "💚 CBD: around ",
-          Math.round(displayParams.cbd * 10) / 10,
-          "mg"
-        ] }),
-        !displayParams.cbd && displayParams.cbd_range && Array.isArray(displayParams.cbd_range) && displayParams.cbd_range.length === 2 && /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "param-tag", children: [
-          "💚 CBD: ",
-          displayParams.cbd_range[0],
-          "-",
-          displayParams.cbd_range[1],
-          "mg"
-        ] }),
-        displayParams.potency_preference && /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "param-tag", children: [
-          "⚡ Potency: ",
-          displayParams.potency_preference
-        ] }),
-        displayParams.time_of_use && /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "param-tag", children: [
-          "🕐 Time: ",
-          displayParams.time_of_use
-        ] }),
-        displayParams.social_context && /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "param-tag", children: [
-          "👥 Context: ",
-          displayParams.social_context
-        ] }),
-        displayParams.consumption_method && /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "param-tag", children: [
-          "💨 Method: ",
-          displayParams.consumption_method
-        ] }),
-        displayParams.experience_level && /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "param-tag", children: [
-          "🎓 Level: ",
-          displayParams.experience_level
-        ] })
-      ] })
+      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "extracted-params", children: Object.entries(displayParams).map(([fieldName, fieldValue]) => {
+        if (!fieldValue || fieldValue === "" || Array.isArray(fieldValue) && fieldValue.length === 0) {
+          return null;
+        }
+        const displayName = fieldName.split("_").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
+        let displayValue;
+        if (Array.isArray(fieldValue)) {
+          displayValue = fieldValue.join(", ");
+        } else if (typeof fieldValue === "number") {
+          if (fieldName === "price") {
+            displayValue = `around $${Math.round(fieldValue)}`;
+          } else if (fieldName === "thc" || fieldName === "cbd") {
+            displayValue = `around ${Math.round(fieldValue * 10) / 10}${fieldName === "thc" ? "%" : "mg"}`;
+          } else {
+            displayValue = String(fieldValue);
+          }
+        } else {
+          displayValue = String(fieldValue);
+        }
+        let emoji = "🎯";
+        if (fieldName === "category") emoji = "📦";
+        else if (fieldName === "brand") emoji = "🏷️";
+        else if (fieldName.includes("effect")) emoji = "✨";
+        else if (fieldName.includes("flavor")) emoji = "🍃";
+        else if (fieldName.includes("mood")) emoji = "😌";
+        else if (fieldName.includes("texture")) emoji = "🔮";
+        else if (fieldName.includes("activity")) emoji = "🎯";
+        else if (fieldName === "price") emoji = "💰";
+        else if (fieldName === "thc") emoji = "🌿";
+        else if (fieldName === "cbd") emoji = "💚";
+        else if (fieldName === "potency_preference") emoji = "⚡";
+        else if (fieldName === "time_of_use") emoji = "🕐";
+        else if (fieldName === "social_context") emoji = "👥";
+        else if (fieldName === "consumption_method") emoji = "💨";
+        else if (fieldName === "experience_level") emoji = "🎓";
+        return /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: `param-tag ${fieldName === "brand" ? "brand" : ""} ${fieldName === "price" ? "priority" : ""}`, children: [
+          emoji,
+          " ",
+          displayName,
+          ": ",
+          displayValue
+        ] }, fieldName);
+      }) })
     ] });
   };
   const DebugPanel = ({
@@ -827,15 +794,19 @@
     /**
      * Update session parameters from UI filter changes
      */
-    async updateSessionParameters(sessionId, filters, generateAIResponse = false) {
+    async updateSessionParameters(sessionId, filters, generateAIResponse = false, replaceAccumulated = false) {
       const url = new URL(`${this.apiUrl}/chat-v2/tenant/${this.tenantId}/chat/session/${sessionId}/parameters`);
       if (generateAIResponse) {
         url.searchParams.append("generate_ai_response", "true");
       }
-      console.log("� Updating session parameters:", {
+      if (replaceAccumulated) {
+        url.searchParams.append("replace_accumulated", "true");
+      }
+      console.log("🎛️ Updating session parameters:", {
         sessionId,
         filters,
-        generateAIResponse
+        generateAIResponse,
+        replaceAccumulated
       });
       const result = await this.makeRequest(url.toString(), {
         method: "PUT",
@@ -1018,7 +989,7 @@
     const filtersToSearchCriteria = require$$0$1.useCallback((currentFilters) => {
       const criteria = {};
       if (currentFilters.category) {
-        criteria.categories = [currentFilters.category];
+        criteria.category = currentFilters.category;
       }
       if (currentFilters.effects) {
         criteria.effects = [currentFilters.effects];
@@ -1325,19 +1296,18 @@
       }
     ]);
     const hasProductAffectingParameters = require$$0$1.useCallback((params) => {
-      var _a, _b, _c, _d, _e;
+      var _a, _b, _c, _d;
       if (!(params == null ? void 0 : params.extracted)) return false;
       const extracted = params.extracted;
-      return !!(((_a = extracted.categories) == null ? void 0 : _a.length) > 0 || ((_b = extracted.effects) == null ? void 0 : _b.length) > 0 || ((_c = extracted.price_range) == null ? void 0 : _c.length) === 2 || ((_d = extracted.thc_range) == null ? void 0 : _d.length) === 2 || ((_e = extracted.cbd_range) == null ? void 0 : _e.length) === 2 || extracted.brand || extracted.potency_preference || extracted.requires_products === true);
+      return !!(extracted.category || ((_a = extracted.effects) == null ? void 0 : _a.length) > 0 || ((_b = extracted.price_range) == null ? void 0 : _b.length) === 2 || ((_c = extracted.thc_range) == null ? void 0 : _c.length) === 2 || ((_d = extracted.cbd_range) == null ? void 0 : _d.length) === 2 || extracted.brand || extracted.potency_preference || extracted.requires_products === true);
     }, []);
     const convertBackendToReactFilters = require$$0$1.useCallback((backendFilters) => {
-      var _a, _b;
+      var _a;
       const converted = {};
-      if (((_a = backendFilters.categories) == null ? void 0 : _a.length) > 0) {
-        const category = backendFilters.categories[0];
-        converted.category = category.charAt(0).toUpperCase() + category.slice(1);
+      if (backendFilters.category) {
+        converted.category = backendFilters.category.charAt(0).toUpperCase() + backendFilters.category.slice(1);
       }
-      if (((_b = backendFilters.effects) == null ? void 0 : _b.length) > 0) {
+      if (((_a = backendFilters.effects) == null ? void 0 : _a.length) > 0) {
         converted.effects = backendFilters.effects[0];
       }
       if (backendFilters.price) {
@@ -1405,6 +1375,56 @@
       setMessages((prev) => [...prev, userMessage]);
       await sendStreamingMessage(message);
     }, [sendStreamingMessage]);
+    const handleClearFilters = require$$0$1.useCallback(async () => {
+      console.log("🧹 Clearing AI-detected filters (preserving category + sliders)...");
+      const preservedParams = {};
+      if (accumulatedParams.category) {
+        preservedParams.category = accumulatedParams.category;
+      }
+      if (accumulatedParams.price) {
+        preservedParams.price = accumulatedParams.price;
+      }
+      if (accumulatedParams.thc) {
+        preservedParams.thc = accumulatedParams.thc;
+      }
+      if (accumulatedParams.cbd) {
+        preservedParams.cbd = accumulatedParams.cbd;
+      }
+      setAccumulatedParams(preservedParams);
+      const clearedFilters = {
+        category: filters.category,
+        effects: "",
+        // Clear dropdown
+        price: filters.price,
+        // Keep slider
+        thc: filters.thc,
+        // Keep slider
+        cbd: filters.cbd
+        // Keep slider
+      };
+      setFilters(clearedFilters);
+      if (sessionId && !streaming) {
+        setLoading(true);
+        try {
+          const sessionResponse = await apiClient.updateSessionParameters(
+            sessionId,
+            preservedParams,
+            false,
+            // No AI response needed for clearing
+            true
+            // ✅ REPLACE mode - don't merge with existing params
+          );
+          if (sessionResponse.products) {
+            setProducts(sessionResponse.products);
+            console.log("✅ Products updated after clearing filters:", sessionResponse.products.length);
+          }
+        } catch (error) {
+          console.error("❌ Failed to clear filters:", error);
+        } finally {
+          setLoading(false);
+        }
+      }
+    }, [accumulatedParams, filters, setAccumulatedParams, setFilters, sessionId, streaming, setLoading, apiClient, setProducts]);
     const handleFilterChange = require$$0$1.useCallback(async (newFilters, shouldSearch = true) => {
       const updatedFilters = { ...filters, ...newFilters };
       setFilters(updatedFilters);
@@ -1527,7 +1547,8 @@
                   ParameterDisplay,
                   {
                     extractedParams,
-                    accumulatedParams
+                    accumulatedParams,
+                    onClearFilters: handleClearFilters
                   }
                 ) }),
                 /* @__PURE__ */ jsxRuntimeExports.jsx(
