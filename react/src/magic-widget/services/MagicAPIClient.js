@@ -88,7 +88,6 @@ export class MagicAPIClient {
     return result;
   }
 
-
   /**
    * Get product recommendations (for initial load)
    */
@@ -109,17 +108,22 @@ export class MagicAPIClient {
   /**
    * Update session parameters from UI filter changes
    */
-  async updateSessionParameters(sessionId, filters, generateAIResponse = false) {
+  async updateSessionParameters(sessionId, filters, generateAIResponse = false, replaceAccumulated = false) {
     const url = new URL(`${this.apiUrl}/chat-v2/tenant/${this.tenantId}/chat/session/${sessionId}/parameters`);
     
     if (generateAIResponse) {
       url.searchParams.append('generate_ai_response', 'true');
     }
     
-    console.log('� Updating session parameters:', {
+    if (replaceAccumulated) {
+      url.searchParams.append('replace_accumulated', 'true');
+    }
+    
+    console.log('🎛️ Updating session parameters:', {
       sessionId,
       filters,
-      generateAIResponse
+      generateAIResponse,
+      replaceAccumulated
     });
     
     const result = await this.makeRequest(url.toString(), {

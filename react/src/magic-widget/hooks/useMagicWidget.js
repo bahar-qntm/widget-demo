@@ -111,9 +111,9 @@ export const useMagicWidget = (config = {}) => {
   const filtersToSearchCriteria = useCallback((currentFilters) => {
     const criteria = {};
     
-    // Category - use canonical field name
+    // Category - send as string (backend expects string now)
     if (currentFilters.category) {
-      criteria.categories = [currentFilters.category];
+      criteria.category = currentFilters.category;
     }
     
     // Effects - use canonical field name

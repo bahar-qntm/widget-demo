@@ -70,7 +70,7 @@ const MagicWidget = ({ config = {} }) => {
     
     // Check for any parameter that would change product search results
     return !!(
-      extracted.categories?.length > 0 ||
+      extracted.category ||
       extracted.effects?.length > 0 ||
       extracted.price_range?.length === 2 ||
       extracted.thc_range?.length === 2 ||
@@ -85,11 +85,9 @@ const MagicWidget = ({ config = {} }) => {
   const convertBackendToReactFilters = useCallback((backendFilters) => {
     const converted = {};
     
-    // Convert category format: categories: ["flower"] → category: "Flower"
-    if (backendFilters.categories?.length > 0) {
-      const category = backendFilters.categories[0];
-      // Capitalize first letter to match FilterPanel options
-      converted.category = category.charAt(0).toUpperCase() + category.slice(1);
+    // Category is already a string, just capitalize first letter
+    if (backendFilters.category) {
+      converted.category = backendFilters.category.charAt(0).toUpperCase() + backendFilters.category.slice(1);
     }
     
     // Convert effects format: effects: ["relaxing"] → effects: "relaxing"
@@ -183,6 +181,63 @@ const MagicWidget = ({ config = {} }) => {
     // Send streaming request
     await sendStreamingMessage(message);
   }, [sendStreamingMessage]);
+
+  // Handle clearing AI-detected filters (preserving category + sliders)
+  const handleClearFilters = useCallback(async () => {
+    console.log('🧹 Clearing AI-detected filters (preserving category + sliders)...');
+    
+    // Preserve only UI-constrained fields (sliders + category)
+    const preservedParams = {};
+    
+    if (accumulatedParams.category) {
+      preservedParams.category = accumulatedParams.category;
+    }
+    if (accumulatedParams.price) {
+      preservedParams.price = accumulatedParams.price;
+    }
+    if (accumulatedParams.thc) {
+      preservedParams.thc = accumulatedParams.thc;
+    }
+    if (accumulatedParams.cbd) {
+      preservedParams.cbd = accumulatedParams.cbd;
+    }
+    
+    // Update accumulated params (clears all semantic fields)
+    setAccumulatedParams(preservedParams);
+    
+    // Clear UI filters - keep slider values, clear dropdown
+    const clearedFilters = {
+      category: filters.category,
+      effects: '',  // Clear dropdown
+      price: filters.price,  // Keep slider
+      thc: filters.thc,      // Keep slider
+      cbd: filters.cbd       // Keep slider
+    };
+    
+    setFilters(clearedFilters);
+    
+    // Trigger new search with cleared parameters using REPLACE mode
+    if (sessionId && !streaming) {
+      setLoading(true);
+      try {
+        const sessionResponse = await apiClient.updateSessionParameters(
+          sessionId,
+          preservedParams,
+          false, // No AI response needed for clearing
+          true   // ✅ REPLACE mode - don't merge with existing params
+        );
+        
+        if (sessionResponse.products) {
+          setProducts(sessionResponse.products);
+          console.log('✅ Products updated after clearing filters:', sessionResponse.products.length);
+        }
+      } catch (error) {
+        console.error('❌ Failed to clear filters:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+  }, [accumulatedParams, filters, setAccumulatedParams, setFilters, sessionId, streaming, setLoading, apiClient, setProducts]);
 
   // Handle filter changes from UI (single API call approach)
   const handleFilterChange = useCallback(async (newFilters, shouldSearch = true) => {
@@ -349,6 +404,7 @@ const MagicWidget = ({ config = {} }) => {
                 <ParameterDisplay
                   extractedParams={extractedParams}
                   accumulatedParams={accumulatedParams}
+                  onClearFilters={handleClearFilters}
                 />
               )}
               
