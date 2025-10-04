@@ -601,7 +601,7 @@
   }) => {
     var _a, _b, _c;
     const [activeTab, setActiveTab] = require$$0$1.useState("state");
-    return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "debug-section show", children: [
+    return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "debug-section", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "section-title", children: "🐛 Debug Information" }),
       /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "debug-tabs", children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -1512,51 +1512,53 @@
               onResetSession: handleResetSession
             }
           ),
-          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "widget-content", children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx(
-              ProductGrid,
-              {
-                products,
-                loading: loading || streaming,
-                isMiniView
-              }
-            ),
-            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: `expandable-sections ${isMiniView ? "collapsed" : "expanded"}`, children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "info-displays", children: extractedParams && /* @__PURE__ */ jsxRuntimeExports.jsx(
-                ParameterDisplay,
-                {
-                  extractedParams,
-                  accumulatedParams
-                }
-              ) }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: `widget-content ${showDebug ? "debug-active" : ""}`, children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "main-content-area", children: [
               /* @__PURE__ */ jsxRuntimeExports.jsx(
-                FilterPanel,
+                ProductGrid,
                 {
-                  filters,
-                  categoryStats,
+                  products,
                   loading: loading || streaming,
-                  onFilterChange: handleFilterChange
+                  isMiniView
                 }
               ),
-              /* @__PURE__ */ jsxRuntimeExports.jsx(
-                ChatInterface,
-                {
-                  messages,
-                  onSendMessage: handleSendMessage,
-                  streaming,
-                  progress,
-                  disabled: loading
-                }
-              ),
-              showDebug && /* @__PURE__ */ jsxRuntimeExports.jsx(
-                DebugPanel,
-                {
-                  debugState,
-                  filters,
-                  extractedParams
-                }
-              )
-            ] })
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: `expandable-sections ${isMiniView ? "collapsed" : "expanded"}`, children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "info-displays", children: extractedParams && /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  ParameterDisplay,
+                  {
+                    extractedParams,
+                    accumulatedParams
+                  }
+                ) }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  FilterPanel,
+                  {
+                    filters,
+                    categoryStats,
+                    loading: loading || streaming,
+                    onFilterChange: handleFilterChange
+                  }
+                ),
+                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  ChatInterface,
+                  {
+                    messages,
+                    onSendMessage: handleSendMessage,
+                    streaming,
+                    progress,
+                    disabled: loading
+                  }
+                )
+              ] })
+            ] }),
+            showDebug && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "debug-sidebar", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+              DebugPanel,
+              {
+                debugState,
+                filters,
+                extractedParams
+              }
+            ) })
           ] })
         ]
       }
